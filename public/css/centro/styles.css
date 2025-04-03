@@ -1,0 +1,177 @@
+
+/* ---- CENTRO ---- */
+
+/* HEADER */
+
+.HEADER a {
+    list-style: none;
+    color: var(--color-gray);
+    text-decoration: none;
+}
+
+.HEADER a, .HEADER img {
+    margin-right: 5px;
+}
+
+.HEADER .navegar {
+    position: absolute;
+    top: 52px;
+    right: 125px;
+    background-size: contain;
+}
+
+/* DASHBOARD */
+
+.DIV-CENTRO .CENTRO {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+}
+
+table {
+    width: 100%;
+}
+
+.DIV-CENTRO h1 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 32px;
+    text-align: left;
+    margin-left: 5vh;
+}
+
+.DIV-CENTRO .crear-tit {
+    padding-right: 12.5%;
+}
+
+.DIV-CENTRO .btn-aceptar, .BOTON-CREAR {
+    background-color: var(--color-btn-crear);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    cursor: pointer;
+    border: 0;
+}
+
+.btn-aceptar:hover, .BOTON-CREAR:hover {
+    background-color: var(--color-btn-crear-dark);
+}
+
+.DIV-CENTRO .btn-cancelar, .btn-elim {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.btn-cancelar:hover, .btn-elim:hover {
+    background-color: var(--color-btn-elim-dark);
+}
+
+.DIV-CENTRO .btn-modificar {
+    background-color: var(--color-btn-mod);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
+.btn-modificar:hover {
+    background-color: var(--color-btn-mod-dark);
+}
+
+td {
+    padding-left: 12vh;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+@media (max-width: 768px) {
+    .OFERTAS {
+        padding: 1.5rem;
+    }
+
+    .DIV-CENTRO h1 {
+        font-size: 24px;
+        margin-left: 3vh;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 1em;
+    }
+
+    .btn-cancelar, .btn-aceptar {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}
+
+/* PAGINA EN DESARROLLO */
+
+.CONTENIDO .pag-desarrollo {
+    text-align: center;
+    font-size: 56px;
+}
+
+/* FORMULARIOS */
+
+.CENTRO form {
+    padding-left: 12vh;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+label {
+    position: absolute;
+    top: 35%;
+}
+
+input {
+    margin-top: 1rem;
+    width: 100%;
+    position: relative;
+    padding: 1rem;
+    outline: none;
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    background-color: var(--color-light-gray);
+    width: 90%;
+}
+
+input:focus {
+    border: 2px solid var(--color-purple-dark);
+}
+
+.btn-titulo {
+    text-align: center;
+}
+
+.crear-titulo, .mod-titulo {
+    margin-top: 5rem;
+    background-color: var(--color-purple-dark);
+    padding: 15px 22px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.crear-titulo:hover, .mod-titulo:hover {
+    background-color: var(--color-purple-light);
+}

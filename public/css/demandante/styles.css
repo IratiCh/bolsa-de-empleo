@@ -1,0 +1,511 @@
+/* ---- DEMANDANTE ---- */
+
+/* HEADER PERFIL */
+
+.HEADER-PERFIL {
+    background-image: linear-gradient(90deg,
+            #FFE0FF 0%,
+            #E7E0EC 100%);
+    min-height: 12.5vh;
+}
+
+.HEADER-PERFIL .logo {
+    position: absolute;
+    top: 36px;
+    left: 50px;
+    background-size: contain;
+}
+
+.HEADER-PERFIL .user img {
+    position: absolute;
+    top: 36px;
+    right: 50px;
+    background-size: contain;
+}
+
+/* FOOTER PERFIL */
+
+.footer-perfil {
+    background-image: linear-gradient(90deg,
+            #E7E0EC 0%,
+            #FFE0FF 100%);
+}
+
+/* HEADER DASHBOARD */
+
+.HEADER-DASH {
+    background-image: linear-gradient(180deg,
+            var(--color-white) 0%,
+            var(--color-purple-dark) 100%);
+    min-height: 700px;
+}
+
+.HEADER-DASH .logo {
+    position: absolute;
+    top: 36px;
+    left: 50px;
+    background-size: contain;
+}
+
+.HEADER-DASH .user img {
+    position: absolute;
+    top: 36px;
+    right: 50px;
+    background-size: contain;
+}
+
+.HEADER-DASH .dash h1 {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 35%;
+}
+
+.HEADER-DASH .dash img {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    width: 50%;
+}
+
+/* CONTENIDO */
+
+.DIV-DEMANDANTE .DEMANDANTE {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+}
+
+.PERFIL .DEMANDANTE {
+    position: relative;
+    background-color: var(--color-white);
+    padding: 3rem;
+}
+
+table {
+    width: 100%;
+}
+
+.table-perfil td {
+    padding-left: 5vh;
+}
+
+.DIV-DEMANDANTE h1 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 32px;
+    text-align: left;
+    margin-left: 5vh;
+}
+
+.DIV-DEMANDANTE .btn-cancelar {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+    font-weight: 700;
+}
+
+.btn-cancelar:hover {
+    background-color: var(--color-btn-elim-dark);
+}
+
+td {
+    padding-left: 12vh;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+@media (max-width: 768px) {
+
+    .DIV-DEMANDANTE h1 {
+        font-size: 24px;
+        margin-left: 3vh;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        font-size: 1em;
+    }
+
+    .btn-cancelar {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}
+
+/* PAGINA EN DESARROLLO */
+
+.CONTENIDO .pag-desarrollo {
+    text-align: center;
+    font-size: 56px;
+}
+
+/* PERFIL */
+
+.perfil-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    margin: 20px auto;
+    padding: 10px 20px;
+}
+
+.perfil-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfil-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    padding: 5px;
+}
+
+.perfil-texto {
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-texto p {
+    margin: 0;
+}
+
+.perfil-texto p:first-child {
+    font-weight: bold;
+    color: var(--color-black);
+}
+
+.perfil-texto p:last-child {
+    font-size: 0.9em;
+    color: var(--color-gray);
+}
+
+.btn-perfil {
+    display: flex;
+    gap: 10px;
+}
+
+/* FORMULARIOS */
+
+.act-ofertas-apun {
+    background-color: var(--color-btn-mod);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
+.act-ofertas-apun:hover {
+    background-color: var(--color-btn-mod-dark);
+
+}
+
+.btn-logout {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.btn-logout:hover {
+    background-color: var(--color-btn-elim-dark);
+
+}
+
+.DEMANDANTE form {
+    padding-left: 12vh;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+label {
+    top: 35%;
+    font-size: 18px;
+}
+
+input,
+select {
+    margin-top: 1rem;
+    width: 100%;
+    position: relative;
+    padding: 1rem;
+    outline: none;
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    background-color: var(--color-light-gray);
+    width: 90%;
+}
+
+input:focus,
+select:focus {
+    border: 2px solid var(--color-purple-dark);
+}
+
+.btn-datos,
+.btn-info {
+    text-align: right;
+}
+
+.btn-info {
+    margin-top: 50px;
+}
+
+.act-datos,
+.act-info,
+.inscribirse-ofer {
+    background-color: var(--color-btn-mod);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
+.inscribirse-ofer {
+    font-weight: 700;
+}
+
+.act-datos:hover,
+.act-info:hover,
+.inscribirse-ofer:hover {
+    background-color: var(--color-btn-mod-dark);
+}
+
+h2 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 20px;
+    text-align: left;
+}
+
+/* INSCRIBIRSE OFERTA */
+
+.btn-insc {
+    text-align: center;
+}
+
+.det-ofer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left-oferta,
+.right-oferta {
+    font-family: var(--font-secondary);
+}
+
+.left-oferta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 0.6;
+    margin-left: 10vh;
+}
+
+.left-oferta h2 {
+    font-size: 24px;
+}
+
+.left-oferta p {
+    font-size: 20px;
+}
+
+.right-oferta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 0.4;
+}
+
+.right-section-ofer {
+    position: relative;
+    width: 80%;
+    left: 5%;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    background-color: #e7e0ec80;
+}
+
+.right-section-ofer h3,
+.right-section-ofer p {
+    margin-left: 1rem;
+}
+
+.right-section-ofer h3 {
+    font-size: 18px;
+}
+
+.right-section-ofer p {
+    font-size: 16px;
+    color: var(--color-gray);
+}
+
+/* DASHBOARD */
+
+.CONTENIDO .title-dash {
+    text-align: center;
+    margin-top: 0;
+}
+
+.section-ofer {
+    position: relative;
+    width: 30%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+
+}
+
+.lista-ofertas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    font-family: var(--font-secondary);
+}
+
+.card-ofer {
+    width: 30%;
+    min-width: 300px;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-left: 1rem;
+    padding: 1rem;
+}
+
+.card-header {
+    margin-left: 1rem;
+}
+
+.card-details {
+    margin-left: 1rem;
+}
+
+.card-details {
+    margin-left: 1rem;
+}
+
+.card-details p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.info-empresa img {
+    background-color: #f0f0f0;
+    padding: 0.3rem;
+}
+
+.info-section,
+.info-empresa {
+    display: flex;
+    align-items: center;
+}
+
+.info-section p:first-child {
+    margin-right: 10px;
+}
+
+.info-empresa img,
+.info-section img {
+    margin-right: 10px;
+}
+
+/* BUSCADOR */
+
+.buscador {
+    position: absolute;
+    top: 655px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 70%;
+}
+.buscador img {
+    margin-left: 2rem;
+}
+
+.buscador input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-input {
+    margin: 0;
+    position: relative;
+    padding: 10px 22px;
+    background-color: var(--color-white);
+    color: var(--color-gray);
+    width: 100%;
+}
+
+.buscador button {
+    padding: 10px 22px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.limpiar {
+    margin: 0;
+    position: relative;
+    padding: 10px 22px;
+    background-color: var(--color-white);
+    color: var(--color-gray);
+    width: 10%;
+    cursor: pointer;
+}
+
+.cont-buscar {
+    margin-right: 2rem;
+}
+
+.btn-buscar {
+    background-color: var(--color-purple-dark);
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.btn-buscar:hover {
+    background-color: var(--color-btn-mod-dark);
+}

@@ -1,0 +1,155 @@
+
+/* ---- EMPRESA ---- */
+
+/* DASHBOARD */
+
+
+.OFERTAS-DEL-CENTRO .OFERTAS {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+}
+
+table {
+    width: 100%;
+}
+
+.OFERTAS-DEL-CENTRO h1 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 32px;
+    text-align: left;
+    margin-left: 5vh;
+}
+
+h2 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 20px;
+    text-align: left;
+    margin-left: 5vh;
+    margin-top: 5rem;
+
+}
+
+.OFERTAS-DEL-CENTRO .BOTON-CREAR {
+    background-color: var(--color-btn-crear);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    cursor: pointer;
+    border: 0;
+}
+
+.BOTON-CREAR:hover {
+    background-color: var(--color-btn-crear-dark);
+}
+
+.OFERTAS-DEL-CENTRO .btn-modificar {
+    background-color: var(--color-btn-mod);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
+.btn-modificar:hover {
+    background-color: var(--color-btn-mod-dark);
+}
+
+.OFERTAS-DEL-CENTRO .btn-cerrar {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.btn-cerrar:hover {
+    background-color: var(--color-btn-elim-dark);
+}
+
+td {
+    padding-left: 12vh;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+@media (max-width: 768px) {
+    .OFERTAS {
+        padding: 1.5rem;
+    }
+
+    .OFERTAS-DEL-CENTRO h1 {
+        font-size: 24px;
+        margin-left: 3vh;
+    }
+
+    .BOTON-CREAR {
+        width: 100%;
+        text-align: center;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 1em;
+    }
+
+    .btn-modificar, .btn-cerrar {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}
+
+
+/* CREAR OFERTA */
+
+input, select, textarea {
+    margin-top: 1rem;
+    width: 100%;
+    position: relative;
+    padding: 1rem;
+    outline: none;
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    background-color: var(--color-light-gray);
+}
+
+.table-ofert td {
+    padding-left: 5vh;
+}
+
+input:focus, textarea:focus, select:focus {
+    border: 2px solid var(--color-purple-dark);
+}
+
+.btn-oferta {
+    text-align: center;
+}
+
+.crear-oferta {
+    margin-top: 2rem;
+    background-color: var(--color-purple-dark);
+    padding: 15px 22px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.crear-oferta:hover {
+    background-color: var(--color-purple-light);
+}
