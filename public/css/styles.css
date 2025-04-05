@@ -127,6 +127,15 @@
     text-decoration: none;
 }
 
+.register a:first-child {
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
+
+.register a:last-child {
+    margin-left: 0.5rem;
+}
+
 .register a:hover {
     color: var(--color-purple-dark);
 }

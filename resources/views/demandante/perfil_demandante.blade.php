@@ -95,7 +95,12 @@
             <tr>
               <td>
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Nombre">
+                <select name="select">
+                  <option value="value1" selected disabled>Nombre</option>
+                  <option value="value1">Value 1</option>
+                  <option value="value2">Value 2</option>
+                  <option value="value3">Value 3</option>
+                </select>
               </td>
               <td>
                 <label for="centro">Centro</label>
@@ -126,7 +131,12 @@
             <tr>
               <td>
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Nombre">
+                <select name="select">
+                  <option value="value1" selected disabled>Nombre</option>
+                  <option value="value1">Value 1</option>
+                  <option value="value2">Value 2</option>
+                  <option value="value3">Value 3</option>
+                </select>
               </td>
               <td>
                 <label for="centro">Centro</label>
