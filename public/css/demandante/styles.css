@@ -64,8 +64,16 @@
 .HEADER-DASH .dash img {
     position: absolute;
     top: 100px;
-    right: 20px;
-    width: 50%;
+    right: 2.5%;
+    width: 680px;
+}
+
+@media (min-width: 2000px) {
+    .HEADER-DASH .dash img {
+        width: 680px;
+        right: 10%;
+        top: 100px;
+    }
 }
 
 /* CONTENIDO */
