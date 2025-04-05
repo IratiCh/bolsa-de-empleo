@@ -15,7 +15,6 @@ return new class extends Migration
             $table->foreignId('id_oferta')->constrained('oferta');
             $table->foreignId('id_titulo')->constrained('titulos');
             $table->primary(['id_oferta', 'id_titulo']);
-            $table->timestamps();
         });
     }
 

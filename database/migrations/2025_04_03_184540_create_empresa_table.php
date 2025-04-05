@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('localidad', 45);
             $table->string('telefono', 9);
             $table->string('email', 50)->unique();
-            $table->timestamps();
         });
     }
 

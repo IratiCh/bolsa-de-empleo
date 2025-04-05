@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('año', 45)->nullable();
             $table->string('cursando', 45)->nullable();
             $table->primary(['id_dem', 'id_titulo']);
-            $table->timestamps();
         });
     }
 

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('tel_movil', 9);
             $table->string('email', 45)->unique();
             $table->tinyInteger('situacion');
-            $table->timestamps();
         });
     }
 

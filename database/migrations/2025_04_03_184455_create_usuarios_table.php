@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('contrasena_hash', 255);
             $table->enum('rol', ['centro', 'empresa', 'demandante']);
             $table->integer('id_rol');
-            $table->timestamps();
         });
     }
 

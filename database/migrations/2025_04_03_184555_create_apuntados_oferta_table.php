@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('adjudicada', 45)->nullable();
             $table->date('fecha')->nullable();
             $table->primary(['id_oferta', 'id_demandante']);
-            $table->timestamps();
         });
     }
 

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->foreignId('id_emp')->constrained('empresa');
             $table->foreignId('id_titulo')->constrained('titulos');
             $table->primary(['id_emp', 'id_titulo']);
-            $table->timestamps();
         });
     }
 
