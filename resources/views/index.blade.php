@@ -6,5 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @vite('public/src/main.jsx')
 </head>
-    <div id="root"></div>
+    <body id="root">
+    </body
 </html>

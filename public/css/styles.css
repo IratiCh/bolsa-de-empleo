@@ -45,6 +45,12 @@
     border-bottom-right-radius: 40px;
 }
 
+/* ERRORES */
+
+.error {
+    color:red;
+}
+
 /* HEADER INDEX (LOGO MORADO) */
 
 .index-header {

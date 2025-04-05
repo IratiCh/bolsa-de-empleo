@@ -6,7 +6,7 @@ const Index = () => {
     const navigate = useNavigate();
 
     return (
-        <body className="index-body">
+        <div className="index-body">
             <div className="different-bg">
             <header className="index-header">
                 <div className="index-logo">
@@ -26,9 +26,9 @@ const Index = () => {
                 <button className="index-btn" onClick={() => navigate('/login')}>Inicia Sesión</button>
                 <p className="register">
                 ¿No tienes una cuenta?
-                <Link to="/registro/demandante">Regístrate para trabajar</Link> 
+                <Link to="/registro_demandante">Regístrate para trabajar</Link> 
                 |
-                <Link to="/registro/empresa">Regístrate para ofrecer trabajo</Link>
+                <Link to="/registro_empresa">Regístrate para ofrecer trabajo</Link>
                 </p>
             </div>
 
@@ -85,7 +85,7 @@ const Index = () => {
                 </div>
             </footer>
             </div>
-        </body>
+        </div>
     );
 };
 
