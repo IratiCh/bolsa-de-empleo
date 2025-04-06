@@ -37,8 +37,8 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Inicio de sesión exitoso',
                 'rol' => $user->rol,
-                'validated' => $empresa->validated, // Assuming this field exists
-                'empresa_id' => $empresa->id
+                'validado' => $empresa->validado, // Assuming this field exists
+                'id' => $empresa->id
             ]);
         }
     

@@ -32,7 +32,7 @@ const Login = () => {
                         navigate('/demandante/dashboard_demandante');
                         break;
                     case 'empresa':
-                        switch (data.validated) {
+                        switch (data.validado) {
                             case -1:
                                 setErrorMessage('Tu cuenta ha sido rechazada. Por favor contacta al administrador.');
                                 break;
