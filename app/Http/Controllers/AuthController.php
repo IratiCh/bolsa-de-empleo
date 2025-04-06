@@ -29,7 +29,19 @@ class AuthController extends Controller
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
-        // Autenticación exitosa
+        if ($user->rol === 'empresa') {
+            $empresa = Empresa::where('email', $request->email)->first();
+            if (!$empresa) {
+                return response()->json(['message' => 'Perfil de empresa no encontrado'], 404);
+            }
+            return response()->json([
+                'message' => 'Inicio de sesión exitoso',
+                'rol' => $user->rol,
+                'validated' => $empresa->validated, // Assuming this field exists
+                'empresa_id' => $empresa->id
+            ]);
+        }
+    
         Auth::login($user);
 
         // Determinar el rol del usuario y redirigir según corresponda

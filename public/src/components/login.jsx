@@ -32,7 +32,19 @@ const Login = () => {
                         navigate('/demandante/dashboard_demandante');
                         break;
                     case 'empresa':
-                        navigate('/empresa/dashboard_empresa');
+                        switch (data.validated) {
+                            case -1:
+                                setErrorMessage('Tu cuenta ha sido rechazada. Por favor contacta al administrador.');
+                                break;
+                            case 0:
+                                setErrorMessage('Tu cuenta está pendiente de validación. Por favor espera la confirmación.');
+                                break;
+                            case 1:
+                                navigate('/empresa/dashboard_empresa');
+                                break;
+                            default:
+                                setErrorMessage('Estado de validación desconocido');
+                        }
                         break;
                     case 'centro':
                         navigate('/centro/dashboard_centro');
