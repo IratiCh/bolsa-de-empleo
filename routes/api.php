@@ -28,8 +28,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/login', [AuthController::class, 'login']);
-Route::get('auth/me', [AuthController::class, 'me'])->middleware('auth:api'); // Para obtener datos del usuario autenticado
-Route::put('auth/me', [AuthController::class, 'updateMe'])->middleware('auth:api'); // Para actualizar datos del usuario autenticado
+// Route::get('auth/me', [AuthController::class, 'me'])->middleware('auth:api'); // Para obtener datos del usuario autenticado
+// Route::put('auth/me', [AuthController::class, 'updateMe'])->middleware('auth:api'); // Para actualizar datos del usuario autenticado
+// rutas para autenticacion basada en sesiones
+Route::middleware('auth')->group(function () {
+    Route::get('auth/me', [AuthController::class, 'me']);
+    Route::put('auth/me', [AuthController::class, 'updateMe']);
+});
+
 
 Route::get('empresas', [EmpresaController::class, 'index']);
 Route::get('empresas/{id}', [EmpresaController::class, 'show']);
@@ -77,3 +83,4 @@ Route::delete('tipos-contrato/{id}', [TipoContratoController::class, 'destroy'])
 
 Route::get('centro/empresas/pendientes', [AdminController::class, 'empresasPendientes']);
 Route::put('centro/empresas/{id}/validar', [AdminController::class, 'validarEmpresa']);
+Route::put('centro/empresas/{id}/rechazar', [AdminController::class, 'rechazarEmpresa']);
