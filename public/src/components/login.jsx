@@ -14,7 +14,7 @@ const Login = () => {
 
         // Lógica para enviar los datos de inicio de sesión al backend
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,14 +25,20 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                if (data.rol === 'demandante') {
-                    navigate('/demandante/dashboard_demandante');  // Cambia la ruta según tu estructura
-                } else if (data.rol === 'empresa') {
-                    navigate('/empresa/dashboard_empresa');  // Cambia la ruta según tu estructura
-                } if (data.rol === 'centro') {
-                    navigate('/centro/dashboard_centro');
-                } else {
-                    setErrorMessage('Rol desconocido');
+                localStorage.setItem('usuario', JSON.stringify(data));
+
+                switch (data.rol) {
+                    case 'demandante':
+                        navigate('/demandante/dashboard_demandante');
+                        break;
+                    case 'empresa':
+                        navigate('/empresa/dashboard_empresa');
+                        break;
+                    case 'centro':
+                        navigate('/centro/dashboard_centro');
+                        break;
+                    default:
+                        setErrorMessage('Rol desconocido');
                 }
             } else {
                 // Manejar errores, mostrar un mensaje de error si es necesario
