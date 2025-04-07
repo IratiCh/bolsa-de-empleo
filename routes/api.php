@@ -3,13 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthController;/*
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\DemandanteController;
-use App\Http\Controllers\TituloController;
-use App\Http\Controllers\TipoContratoController;
+use App\Http\Controllers\TipoContratoController;*/
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TituloController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -19,6 +19,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/register_demandante', [AuthController::class, 'registerDemandante']);
 Route::post('auth/register_empresa', [AuthController::class, 'registerEmpresa']);
+
+/* CENTRO */
+
+Route::get('/centro/empresas-pendientes', [AdminController::class, 'getEmpresasPendientes']);
+Route::put('/centro/validar-empresa/{id}', [AdminController::class, 'validarEmpresa']);
+Route::get('/centro/titulos', [TituloController::class, 'gestionTitulos']);
+Route::delete('/centro/titulos/{id}', [TituloController::class, 'eliminar']);
+Route::post('/centro/titulos', [TituloController::class, 'crear']);
+Route::get('/centro/titulos/{id}', [TituloController::class, 'mostrar']);
+Route::put('/centro/titulos/{id}', [TituloController::class, 'modificar']);
+/*
 // Route::get('auth/me', [AuthController::class, 'me'])->middleware('auth:api'); // Para obtener datos del usuario autenticado
 // Route::put('auth/me', [AuthController::class, 'updateMe'])->middleware('auth:api'); // Para actualizar datos del usuario autenticado
 // rutas para autenticacion basada en sesiones
@@ -71,7 +82,4 @@ Route::get('tipos-contrato', [TipoContratoController::class, 'index']);
 Route::get('tipos-contrato/{id}', [TipoContratoController::class, 'show']);
 Route::put('tipos-contrato/{id}', [TipoContratoController::class, 'update']);
 Route::delete('tipos-contrato/{id}', [TipoContratoController::class, 'destroy']);
-
-Route::get('centro/empresas/pendientes', [AdminController::class, 'empresasPendientes']);
-Route::put('centro/empresas/{id}/validar', [AdminController::class, 'validarEmpresa']);
-Route::put('centro/empresas/{id}/rechazar', [AdminController::class, 'rechazarEmpresa']);
+*/

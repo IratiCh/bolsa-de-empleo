@@ -65,6 +65,7 @@ table {
     background-color: var(--color-btn-elim);
     padding: 10px 22px;
     border-radius: 8px;
+    margin-left: 2rem;
     color: var(--color-white);
     cursor: pointer;
     font-family: var(--font-secondary);

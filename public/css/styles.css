@@ -684,10 +684,13 @@ body {
     display: block;
 }
 
-.HEADER .desplegable a {
+.HEADER .desplegable button {
     display: block;
     padding: 0.5rem;
     text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    background-color: var(--color-purple-bg-contenido);
     color: var(--color-gray);
     font-family: var(--font-secondary);
 }

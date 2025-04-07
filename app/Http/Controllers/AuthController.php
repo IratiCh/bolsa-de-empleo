@@ -37,7 +37,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Inicio de sesión exitoso',
                 'rol' => $user->rol,
-                'validado' => $empresa->validado, // Assuming this field exists
+                'validado' => $empresa->validado,
                 'id' => $empresa->id
             ]);
         }
@@ -45,11 +45,11 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Determinar el rol del usuario y redirigir según corresponda
-        $role = $user->rol; // Suponiendo que el campo `role` está en la tabla `users`
+        $rol = $user->rol;
 
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
-            'rol' => $role
+            'rol' => $rol
         ]);
     }
     public function registerDemandante(Request $request)

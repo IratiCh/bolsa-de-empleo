@@ -4,70 +4,116 @@ namespace App\Http\Controllers;
 
 use App\Models\Titulo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TituloController extends Controller
 {
-    // Listar todos los títulos
-    public function index()
+    public function gestionTitulos()
     {
-        $titulos = Titulo::all();
-        return response()->json($titulos);
-    }
-
-    // Mostrar un título específico
-    public function show($id)
-    {
-        $titulo = Titulo::find($id);
-
-        if (!$titulo) {
-            return response()->json(['message' => 'Título no encontrado'], 404);
+        try {
+            $titulos = Titulo::all();
+            return response()->json($titulos);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al cargar títulos',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json($titulo);
     }
 
-    // Crear un nuevo título
-    public function store(Request $request)
+    public function eliminar($id)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:45|unique:titulos,nombre',
+        try {
+            $titulo = Titulo::findOrFail($id);
+            $titulo->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function crear(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:45|unique:titulos,nombre'
+        ], [
+            // Mensajes personalizados
+            'nombre.max' => 'El nombre es demasiado largo',
         ]);
 
-        $titulo = Titulo::create($validated);
-
-        return response()->json(['message' => 'Título creado con éxito', 'titulo' => $titulo], 201);
-    }
-
-    // Actualizar un título existente
-    public function update(Request $request, $id)
-    {
-        $titulo = Titulo::find($id);
-
-        if (!$titulo) {
-            return response()->json(['message' => 'Título no encontrado'], 404);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:45|unique:titulos,nombre,' . $id,
+        try {
+            $titulo = Titulo::create([
+                'nombre' => $request->nombre
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'titulo' => $titulo
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear título'
+            ], 500);
+        }
+    }
+
+    public function mostrar($id)
+    {
+        try {
+            $titulo = Titulo::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'titulo' => $titulo
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Título no encontrado',
+                'details' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    public function modificar(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:45|unique:titulos,nombre,'.$id
+        ], [
+            'nombre.max' => 'El nombre es demasiado largo',
         ]);
 
-        $titulo->update($validated);
-
-        return response()->json(['message' => 'Título actualizado con éxito', 'titulo' => $titulo]);
-    }
-
-    // Eliminar un título
-    public function destroy($id)
-    {
-        $titulo = Titulo::find($id);
-
-        if (!$titulo) {
-            return response()->json(['message' => 'Título no encontrado'], 404);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        // Se eliminan también relaciones en tablas pivot automáticamente si están configuradas con `onDelete('cascade')`
-        $titulo->delete();
+        try {
+            $titulo = Titulo::findOrFail($id);
+            $titulo->update([
+                'nombre' => $request->nombre
+            ]);
 
-        return response()->json(['message' => 'Título eliminado con éxito']);
+            return response()->json([
+                'success' => true,
+                'titulo' => $titulo
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar título'
+            ], 500);
+        }
     }
 }
