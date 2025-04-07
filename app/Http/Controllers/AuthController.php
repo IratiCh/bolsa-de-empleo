@@ -29,7 +29,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Determinar el rol del usuario y redirigir según corresponda
-        $role = $user->rol; // Suponiendo que el campo `role` está en la tabla `users`
+        $role = $user->rol;
 
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
