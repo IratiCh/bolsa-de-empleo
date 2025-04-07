@@ -37,7 +37,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Inicio de sesión exitoso',
                 'rol' => $user->rol,
-                'validado' => $empresa->validado, // Assuming this field exists
+                'validado' => $empresa->validado,
                 'id' => $empresa->id
             ]);
         }
@@ -45,7 +45,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Determinar el rol del usuario y redirigir según corresponda
-        $role = $user->rol; // Suponiendo que el campo `role` está en la tabla `users`
+        $role = $user->rol;
 
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
@@ -158,7 +158,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Crear el demandante
+        // Crear la empresa
         $empresa = Empresa::create([
             'nombre' => $request->nombre,
             'localidad' => $request->localidad,
@@ -168,7 +168,7 @@ class AuthController extends Controller
             'validado' => 0
         ]);
 
-        // Crear el usuario vinculado al demandante
+        // Crear el usuario vinculado a la empresa
         $usuario = Usuario::create([
             'email' => $request->email,
             'contrasena_hash' => Hash::make($request->contrasena_hash),
