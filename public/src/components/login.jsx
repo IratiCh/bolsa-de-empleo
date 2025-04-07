@@ -26,9 +26,9 @@ const Login = () => {
 
             if (response.ok) {
                 if (data.rol === 'demandante') {
-                    navigate('/demandante/dashboard_demandante');  // Cambia la ruta según tu estructura
+                    navigate('/demandante/dashboard_demandante');
                 } else if (data.rol === 'empresa') {
-                    navigate('/empresa/dashboard_empresa');  // Cambia la ruta según tu estructura
+                    navigate('/empresa/dashboard_empresa'); 
                 } if (data.rol === 'centro') {
                     navigate('/centro/dashboard_centro');
                 } else {
