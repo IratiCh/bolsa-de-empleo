@@ -3,158 +3,160 @@
 namespace App\Http\Controllers;
 
 use App\Models\Oferta;
-use App\Models\Demandante;
+use App\Models\TipoContrato;
+use App\Models\Titulo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class OfertaController extends Controller
 {
-    // Mostrar una oferta específica
-    public function show($id)
+    public function getOfertasAbiertas(Request $request)
     {
-        $oferta = Oferta::with(['empresa', 'tipoContrato', 'titulos'])->find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
+        try {
+            $idEmpresa = $request->input('id_emp');
+        
+            if (!$idEmpresa) {
+                return response()->json(['error' => 'ID de empresa no proporcionado'], 400);
+            }
+
+            $ofertas = Oferta::where('id_emp', $idEmpresa)
+                ->get(['id', 'nombre', 'breve_desc', 'abierta']);
+            return response()->json($ofertas);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al cargar ofertas', 'details' => $e->getMessage()], 500);
         }
-        return response()->json($oferta);
     }
 
-    // Actualizar una oferta
-    public function update(Request $request, $id)
-    {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $validated = $request->validate([
-            'nombre' => 'nullable|string|max:45',
-            'breve_desc' => 'nullable|string|max:45',
-            'desc' => 'nullable|string|max:500',
-            'fecha_pub' => 'nullable|date',
-            'num_puesto' => 'nullable|integer',
-            'horario' => 'nullable|string|max:45',
-            'obs' => 'nullable|string|max:500',
-            'abierta' => 'nullable|boolean',
-            'fecha_cierre' => 'nullable|date',
-            'id_tipo_cont' => 'nullable|exists:tipos_contrato,id',
-        ]);
-
-        $oferta->update($validated);
-
-        return response()->json(['message' => 'Oferta actualizada', 'oferta' => $oferta]);
-    }
-
-    // Eliminar una oferta
-    public function destroy($id)
-    {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $oferta->delete();
-
-        return response()->json(['message' => 'Oferta eliminada']);
-    }
-
-    // Obtener demandantes inscritos en una oferta
-    public function inscripciones($id)
-    {
-        $oferta = Oferta::with('candidatos')->find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        return response()->json($oferta->candidatos);
-    }
-
-    // Inscribir un demandante a una oferta
-    public function inscribirDemandante(Request $request, $id)
-    {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $validated = $request->validate([
-            'id_demandante' => 'required|exists:demandante,id',
-        ]);
-
-        // Inscribir con fecha actual y sin adjudicar
-        $oferta->candidatos()->attach($validated['id_demandante'], [
-            'fecha' => now(),
-            'adjudicada' => false,
-        ]);
-
-        return response()->json(['message' => 'Demandante inscrito correctamente']);
-    }
-
-    // Desinscribir un demandante de una oferta
-    public function desinscribirDemandante(Request $request, $id)
-    {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $validated = $request->validate([
-            'id_demandante' => 'required|exists:demandante,id',
-        ]);
-
-        $oferta->candidatos()->detach($validated['id_demandante']);
-
-        return response()->json(['message' => 'Demandante desinscrito correctamente']);
-    }
-
-    // Candidatos que cumplen con al menos un título de la oferta
-    public function candidatosPerfil($id)
-    {
-        $oferta = Oferta::with('titulos')->find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $tituloIds = $oferta->titulos->pluck('id');
-
-        // Demandantes con al menos uno de esos títulos
-        $candidatos = Demandante::whereHas('titulos', function ($q) use ($tituloIds) {
-            $q->whereIn('titulos.id', $tituloIds);
-        })->get();
-
-        return response()->json($candidatos);
-    }
-
-    // Adjudicar un demandante a una oferta
-    public function adjudicarCandidato(Request $request, $id)
-    {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
-        }
-
-        $validated = $request->validate([
-            'id_demandante' => 'required|exists:demandante,id',
-        ]);
-
-        $oferta->candidatos()->updateExistingPivot($validated['id_demandante'], [
-            'adjudicada' => true,
-        ]);
-
-        return response()->json(['message' => 'Candidato adjudicado correctamente']);
-    }
-
-    // Cerrar una oferta
     public function cerrarOferta($id)
     {
-        $oferta = Oferta::find($id);
-        if (!$oferta) {
-            return response()->json(['message' => 'Oferta no encontrada'], 404);
+        try {
+            $oferta = Oferta::find($id);
+
+            if (!$oferta) {
+                return response()->json(['error' => 'Oferta no encontrada'], 404);
+            }
+
+            // Actualizar el estado de la oferta
+            $oferta->abierta = -1; // Marcamos la oferta como cerrada con -1
+            $oferta->fecha_cierre = now(); // Registrar la fecha de cierre
+            $oferta->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Oferta cerrada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al cerrar la oferta',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getTiposContrato()
+    {
+        try {
+            $tipos = TipoContrato::all();
+            return response()->json([
+                'success' => true,
+                'tipos' => $tipos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar tipos de contrato'
+            ], 500);
+        }
+    }
+
+    public function getTitulos()
+    {
+        try {
+            $titulos = Titulo::all();
+            return response()->json([
+                'success' => true,
+                'titulos' => $titulos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar títulos'
+            ], 500);
+        }
+    }
+
+    public function crearOferta(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:45',
+            'breve_desc' => 'required|string|max:45',
+            'desc' => 'required|string|max:500',
+            'num_puesto' => 'required|integer|min:1',
+            'horario' => 'required|string|max:45',
+            'obs' => 'nullable|string|max:500',
+            'id_tipo_cont' => 'required|exists:tipos_contrato,id',
+            'titulos' => 'required|array',
+            'titulos.*' => 'required|exists:titulos,id'
+        ], [
+
+            // Mensajes personalizados
+            'nombre.max' => 'El nombre es demasiado largo',
+            'breve_desc.max' => 'La breve descripción es demasiado larga',
+            'desc.max' => 'La descripción es demasiado larga.',
+            'horario.max' => 'El horario es demasiado largo.',
+            'obs.max' => 'Las observaciones son demasiado largas.',
+            'titulos.min' => 'Debe seleccionar al menos un título',
+            'num_puesto.min' => 'El número de puestos debe ser al menos 1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+                'message' => $validator->errors()->first()
+            ], 422);
         }
 
-        $oferta->abierta = false;
-        $oferta->fecha_cierre = now();
-        $oferta->save();
+        try {
 
-        return response()->json(['message' => 'Oferta cerrada correctamente']);
+            $oferta = Oferta::create([
+                'nombre' => $request->nombre,
+                'breve_desc' => $request->breve_desc,
+                'desc' => $request->desc,
+                'fecha_pub' => now(),
+                'num_puesto' => $request->num_puesto,
+                'horario' => $request->horario,
+                'obs' => $request->obs,
+                'abierta' => 0, // Oferta abierta por defecto
+                'id_emp' => $request->id_emp,
+                'id_tipo_cont' => $request->id_tipo_cont
+            ]);
+
+            DB::table('ofertas_empresa')->insert([
+                'id_empresa' => $request->id_emp,
+                'id_oferta' => $oferta->id
+            ]);
+
+            foreach ($request->titulos as $idTitulo) {
+                DB::table('titulos_oferta')->insert([
+                    'id_oferta' => $oferta->id,
+                    'id_titulo' => $idTitulo
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Oferta creada correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear oferta',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 }

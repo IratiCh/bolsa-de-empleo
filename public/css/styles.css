@@ -18,8 +18,10 @@
     --color-btn-crear-dark: #1d5828;
     --color-btn-elim: #E23329;
     --color-btn-elim-dark: #a0251e;
+    --color-btn-elim-disable: #e2322933;
     --color-btn-mod: #6750A4;
     --color-btn-mod-dark: #463770;
+    --color-btn-mod-disable: #6650a428;
 }
 
 * {

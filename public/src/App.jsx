@@ -9,6 +9,8 @@ import Informes from './components/centro/informes.jsx';
 import GestionTitulos from "./components/centro/gestion_titulos.jsx";
 import CrearTitulo from "./components/centro/crear_titulo.jsx";
 import ModificarTitulo from "./components/centro/modificar_titulo.jsx";
+import DashboardEmpresa from "./components/empresa/dashboard_empresa.jsx";
+import CrearOferta from "./components/empresa/crear_oferta.jsx";
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registro_demandante" element={<RegistroDemandante />} />
         <Route path="/registro_empresa" element={<RegistroEmpresa />} />
+        
         <Route path="/centro/dashboard_centro" element={
           <ProtectedRoute requiredRole="centro">
             <DashboardCentro />
@@ -45,6 +48,18 @@ function App() {
         <Route path="/centro/modificar_titulo/:id" element={
           <ProtectedRoute requiredRole="centro">
             <ModificarTitulo />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/empresa/dashboard_empresa" element={
+          <ProtectedRoute requiredRole="empresa">
+            <DashboardEmpresa />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/empresa/crear_oferta" element={
+          <ProtectedRoute requiredRole="empresa">
+            <CrearOferta />
           </ProtectedRoute>
         } />
       </Routes>

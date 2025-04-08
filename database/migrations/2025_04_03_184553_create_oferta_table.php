@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('fecha_cierre')->nullable();
             $table->foreignId('id_emp')->constrained('empresa');
             $table->foreignId('id_tipo_cont')->constrained('tipos_contrato');
+            $table->primary(['id', 'id_emp']);
         });
     }
 

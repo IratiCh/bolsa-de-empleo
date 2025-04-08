@@ -9,13 +9,17 @@ const DashboardCentro = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    if (!localStorage.getItem('usuario')) {
+        navigate('/login', { replace: true });
+    }
+
     useEffect(() => {
         const fetchEmpresas = async () => {
             try {
                 const response = await fetch('/api/centro/empresas-pendientes');
                 
                 if (!response.ok) {
-                    throw new Error('Error al cargar empresas');
+                    setError('Error al cargar empresas');
                 }
                 
                 const data = await response.json();

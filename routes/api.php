@@ -5,30 +5,45 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;/*
 use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\DemandanteController;
 use App\Http\Controllers\TipoContratoController;*/
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TituloController;
+use App\Http\Controllers\OfertaController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::post('auth/login', [AuthController::class, 'login']);
-Route::post('auth/register_demandante', [AuthController::class, 'registerDemandante']);
-Route::post('auth/register_empresa', [AuthController::class, 'registerEmpresa']);
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register_demandante', [AuthController::class, 'registerDemandante']);
+    Route::post('/register_empresa', [AuthController::class, 'registerEmpresa']);
+});
 
 /* CENTRO */
+Route::group(['prefix' => 'centro'], function () {
+    Route::get('/empresas-pendientes', [AdminController::class, 'getEmpresasPendientes']);
+    Route::put('/validar-empresa/{id}', [AdminController::class, 'validarEmpresa']);
+    Route::get('/titulos', [TituloController::class, 'gestionTitulos']);
+    Route::delete('/titulos/{id}', [TituloController::class, 'eliminar']);
+    Route::post('/titulos', [TituloController::class, 'crear']);
+    Route::get('/titulos/{id}', [TituloController::class, 'mostrar']);
+    Route::put('/titulos/{id}', [TituloController::class, 'modificar']);
+});
 
-Route::get('/centro/empresas-pendientes', [AdminController::class, 'getEmpresasPendientes']);
-Route::put('/centro/validar-empresa/{id}', [AdminController::class, 'validarEmpresa']);
-Route::get('/centro/titulos', [TituloController::class, 'gestionTitulos']);
-Route::delete('/centro/titulos/{id}', [TituloController::class, 'eliminar']);
-Route::post('/centro/titulos', [TituloController::class, 'crear']);
-Route::get('/centro/titulos/{id}', [TituloController::class, 'mostrar']);
-Route::put('/centro/titulos/{id}', [TituloController::class, 'modificar']);
+/* EMPRESA */
+
+Route::group(['prefix' => 'ofertas'], function () {
+    
+    Route::get('/abiertas', [OfertaController::class, 'getOfertasAbiertas']);
+    Route::put('/{id}/cerrar', [OfertaController::class, 'cerrarOferta']);
+
+    Route::get('/tipos-contrato', [OfertaController::class, 'getTiposContrato']);
+    Route::get('/titulos', [OfertaController::class, 'getTitulos']);
+    Route::post('/crear', [OfertaController::class, 'crearOferta'])->middleware('api');
+});
+
 /*
 // Route::get('auth/me', [AuthController::class, 'me'])->middleware('auth:api'); // Para obtener datos del usuario autenticado
 // Route::put('auth/me', [AuthController::class, 'updateMe'])->middleware('auth:api'); // Para actualizar datos del usuario autenticado

@@ -12,5 +12,15 @@ class Empresa extends Model
         'cif', 'validado', 'nombre', 'localidad', 'telefono', 'email'
     ];
 
+    public function titulos()
+    {
+        return $this->belongsToMany(Titulo::class, 'titulos_empresa', 'id_emp', 'id_titulo');
+    }
+
+    public function ofertas()
+    {
+        return $this->belongsToMany(Oferta::class, 'ofertas_empresa', 'id_empresa', 'id_oferta');
+    }
+
     public $timestamps = false;
 }

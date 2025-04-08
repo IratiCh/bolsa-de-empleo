@@ -60,6 +60,17 @@ h2 {
     border: 0;
 }
 
+.OFERTAS-DEL-CENTRO .btn-modificar:disabled {
+    background-color: var(--color-btn-mod-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: default;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
 .btn-modificar:hover {
     background-color: var(--color-btn-mod-dark);
 }
@@ -70,6 +81,16 @@ h2 {
     border-radius: 8px;
     color: var(--color-white);
     cursor: pointer;
+    font-family: var(--font-secondary);
+    border: 0;
+}
+
+.OFERTAS-DEL-CENTRO .btn-cerrar:disabled {
+    background-color: var(--color-btn-elim-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    cursor: default;
+    color: var(--color-white);
     font-family: var(--font-secondary);
     border: 0;
 }

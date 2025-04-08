@@ -24,7 +24,12 @@ class TituloController extends Controller
     public function eliminar($id)
     {
         try {
-            $titulo = Titulo::findOrFail($id);
+            $titulo = Titulo::find($id);
+
+            if (!$titulo) {
+                return response()->json(['error' => 'Título no encontrado'], 404);
+            }
+
             $titulo->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -69,7 +74,15 @@ class TituloController extends Controller
     public function mostrar($id)
     {
         try {
-            $titulo = Titulo::findOrFail($id);
+            $titulo = Titulo::find($id);
+
+            if (!$titulo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Título no encontrado'
+                ], 404);
+            }
+
             return response()->json([
                 'success' => true,
                 'titulo' => $titulo
@@ -99,7 +112,15 @@ class TituloController extends Controller
         }
 
         try {
-            $titulo = Titulo::findOrFail($id);
+            $titulo = Titulo::find($id);
+
+            if (!$titulo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Título no encontrado'
+                ], 404);
+            }
+            
             $titulo->update([
                 'nombre' => $request->nombre
             ]);

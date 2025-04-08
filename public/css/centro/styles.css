@@ -135,11 +135,6 @@ td {
     padding-top: 3vh;
 }
 
-label {
-    position: absolute;
-    top: 35%;
-}
-
 input {
     margin-top: 1rem;
     width: 100%;

@@ -32,7 +32,13 @@ class AdminController extends Controller
         ]);
 
         try {
-            $empresa = Empresa::findOrFail($id);
+            $empresa = Empresa::find($id);
+
+            if (!$empresa) {
+                return response()->json([
+                    'error' => 'Empresa no encontrada'
+                ], 404);
+            }
             
             $empresa->validado = $request->accion === 'aceptar' ? 1 : -1;
             $empresa->save();

@@ -21,7 +21,7 @@ const GestionTitulos = () => {
                 const response = await fetch('/api/centro/titulos');
                 
                 if (!response.ok) {
-                    throw new Error('Error al cargar títulos');
+                    setError('Error al cargar títulos');
                 }
                 
                 const data = await response.json();
@@ -46,7 +46,7 @@ const GestionTitulos = () => {
             if (response.ok) {
                 setTitulos(titulos.filter(titulo => titulo.id !== id));
             } else {
-                throw new Error('Error al eliminar');
+                setError('Error al eliminar');
             }
         } catch (err) {
             setError(err.message);

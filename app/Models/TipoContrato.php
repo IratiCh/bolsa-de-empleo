@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoContrato extends Model
 {
-    use HasFactory;
+    protected $table = 'tipos_contrato';
+
+    protected $fillable = [
+        'nombre',
+    ];
+
+    public $timestamps = false;
 }

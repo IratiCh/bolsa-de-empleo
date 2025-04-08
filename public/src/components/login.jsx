@@ -25,7 +25,18 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('usuario', JSON.stringify(data));
+                const userData = {
+                    id: data.id,
+                    nombre: data.nombre,
+                    email: data.email,
+                    rol: data.rol,
+                    // Solo agregar id_emp si existe en la respuesta
+                    ...(data.id_emp && { id_emp: data.id_emp }),
+                    ...(data.validado !== undefined && { validado: data.validado })
+                };
+    
+                localStorage.setItem('usuario', JSON.stringify(userData));
+    
 
                 switch (data.rol) {
                     case 'demandante':

@@ -29,28 +29,29 @@ class AuthController extends Controller
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
+        $responseData = [
+            'message' => 'Inicio de sesión exitoso',
+            'id' => $user->id,
+            'nombre' => $user->nombre,
+            'email' => $user->email,
+            'rol' => $user->rol
+        ];
+
         if ($user->rol === 'empresa') {
             $empresa = Empresa::where('email', $request->email)->first();
             if (!$empresa) {
                 return response()->json(['message' => 'Perfil de empresa no encontrado'], 404);
             }
-            return response()->json([
-                'message' => 'Inicio de sesión exitoso',
-                'rol' => $user->rol,
-                'validado' => $empresa->validado,
-                'id' => $empresa->id
-            ]);
+            $responseData['validado'] = $empresa->validado;
+            $responseData['id_emp'] = $empresa->id;
+            
+            
         }
     
         Auth::login($user);
 
-        // Determinar el rol del usuario y redirigir según corresponda
-        $rol = $user->rol;
 
-        return response()->json([
-            'message' => 'Inicio de sesión exitoso',
-            'rol' => $rol
-        ]);
+        return response()->json($responseData);
     }
     public function registerDemandante(Request $request)
     {
