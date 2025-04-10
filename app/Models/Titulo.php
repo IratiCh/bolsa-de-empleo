@@ -13,5 +13,11 @@ class Titulo extends Model
         'nombre'
     ];
 
+    public function demandantes()
+    {
+        return $this->belongsToMany(Demandante::class, 'titulos_demandante', 'id_titulo', 'id_dem')
+                    ->withPivot('centro', 'año', 'cursando');
+    }
+
     public $timestamps = false;
 }

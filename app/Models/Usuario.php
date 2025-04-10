@@ -16,6 +16,11 @@ class Usuario extends Authenticatable
     protected $hidden = [
         'contrasena_hash',
     ];
+    
+    public function demandante()
+    {
+        return $this->belongsTo(Demandante::class, 'id_rol', 'id');
+    }
 
     public $timestamps = false;
 }

@@ -11,6 +11,12 @@ import CrearTitulo from "./components/centro/crear_titulo.jsx";
 import ModificarTitulo from "./components/centro/modificar_titulo.jsx";
 import DashboardEmpresa from "./components/empresa/dashboard_empresa.jsx";
 import CrearOferta from "./components/empresa/crear_oferta.jsx";
+import AsignarOferta from "./components/empresa/asignar_oferta.jsx";
+import DashboardDemandante from "./components/demandante/dashboard_demandante.jsx";
+import PerfilDemandante from "./components/demandante/perfil_demandante.jsx";
+import DetalleOferta from './components/demandante/detalle_oferta.jsx';
+import OfertasInscritas from "./components/demandante/ofertas_inscritas.jsx";
+
 
 function App() {
   return (
@@ -61,6 +67,37 @@ function App() {
           <ProtectedRoute requiredRole="empresa">
             <CrearOferta />
           </ProtectedRoute>
+        } />
+
+        <Route path="/empresa/asignar_oferta/:id" element={
+          <ProtectedRoute requiredRole="empresa">
+            <AsignarOferta />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/demandante/dashboard_demandante" element={
+          <ProtectedRoute requiredRole="demandante">
+            <DashboardDemandante />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/demandante/perfil_demandante" element={
+          <ProtectedRoute requiredRole="demandante">
+            <PerfilDemandante />
+          </ProtectedRoute>
+        } />
+
+        
+        <Route path="/demandante/oferta/:id" element={
+          <ProtectedRoute requiredRole="demandante">
+            <DetalleOferta />
+          </ProtectedRoute>
+        } />
+
+          <Route path="/demandante/ofertas_inscritas" element={
+            <ProtectedRoute requiredRole="demandante">
+              <OfertasInscritas />
+            </ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>

@@ -44,9 +44,16 @@ class AuthController extends Controller
             }
             $responseData['validado'] = $empresa->validado;
             $responseData['id_emp'] = $empresa->id;
-            
-            
         }
+
+        if ($user->rol === 'demandante') {
+            $demandante = Demandante::where('email', $request->email)->first();
+            if (!$demandante) {
+                return response()->json(['message' => 'Perfil de demandante no encontrado'], 404);
+            }
+            $responseData['id_dem'] = $demandante->id;
+        }
+    
     
         Auth::login($user);
 

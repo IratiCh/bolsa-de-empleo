@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Oferta;
 use App\Models\TipoContrato;
 use App\Models\Titulo;
+use App\Models\Demandante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -158,5 +159,66 @@ class OfertaController extends Controller
             ], 500);
         }
     }
+
+    public function getOfertasDemandante(Request $request)
+    {
+        try {
+            // Obtener el ID del demandante desde la solicitud
+            $idDemandante = $request->input('id_dem');
+            
+            // Obtener los títulos del demandante
+            $titulosDemandante = DB::table('titulos_demandante')
+                                ->where('id_dem', $idDemandante)
+                                ->pluck('id_titulo')
+                                ->toArray();
+
+            // Consulta base para ofertas abiertas
+            $query = Oferta::where('abierta', 0)
+                ->with(['empresa', 'tipoContrato'])
+                ->select('oferta.*')
+                ->join('empresa', 'oferta.id_emp', '=', 'empresa.id')
+                ->addSelect('empresa.nombre as empresa_nombre');
+
+            // Si el demandante tiene títulos, filtrar por ellos
+            if (!empty($titulosDemandante)) {
+                $query->whereHas('titulos', function($q) use ($titulosDemandante) {
+                    $q->whereIn('titulos.id', $titulosDemandante);
+                });
+            }
+
+            // Obtener y mapear los resultados
+            $ofertas = $query->get()
+                ->map(function($oferta) {
+                    return [
+                        'id' => $oferta->id,
+                        'nombre' => $oferta->nombre,
+                        'breve_desc' => $oferta->breve_desc,
+                        'fecha_pub' => $oferta->fecha_pub,
+                        'tipo_contrato' => $oferta->tipoContrato->nombre,
+                        'empresa' => $oferta->empresa_nombre
+                    ];
+                });
+
+            \Log::info("Ofertas encontradas:", [
+                'count' => count($ofertas),
+                'con_filtro_titulos' => !empty($titulosDemandante),
+                'titulos_demandante' => $titulosDemandante
+            ]);
+
+            return response()->json($ofertas);
+
+        } catch (\Exception $e) {
+            \Log::error("Error en getOfertasDemandante", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'error' => 'Error al cargar ofertas',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    
 
 }

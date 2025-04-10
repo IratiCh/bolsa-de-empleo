@@ -32,7 +32,9 @@ const Login = () => {
                     rol: data.rol,
                     // Solo agregar id_emp si existe en la respuesta
                     ...(data.id_emp && { id_emp: data.id_emp }),
-                    ...(data.validado !== undefined && { validado: data.validado })
+                    ...(data.validado !== undefined && { validado: data.validado }),
+
+                    ...(data.id_dem && { id_dem: data.id_dem }),
                 };
     
                 localStorage.setItem('usuario', JSON.stringify(userData));

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('id_dem')->constrained('demandante');
             $table->foreignId('id_titulo')->constrained('titulos');
             $table->string('centro', 45)->nullable();
-            $table->string('año', 45)->nullable();
+            $table->date('año')->nullable();
             $table->string('cursando', 45)->nullable();
             $table->primary(['id_dem', 'id_titulo']);
         });

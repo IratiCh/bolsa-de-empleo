@@ -301,6 +301,28 @@ select:focus {
     background-color: var(--color-btn-mod-dark);
 }
 
+.oferta-cerrada {
+    background-color: var(--color-btn-mod-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+    font-weight: 700;
+}
+
+.inscrito-ofer {
+    background-color: var(--color-btn-mod-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+    font-weight: 700;
+}
+
 h2 {
     font-family: var(--font-secondary);
     font-weight: 700;
@@ -413,6 +435,11 @@ h2 {
 
 .card-header {
     margin-left: 1rem;
+}
+
+.card-header h3:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .card-details {

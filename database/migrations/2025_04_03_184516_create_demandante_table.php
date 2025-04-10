@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nombre', 45);
             $table->string('ape1', 45);
             $table->string('ape2', 45);
-            $table->string('tel_movil', 9);
+            $table->integer('tel_movil');
             $table->string('email', 45)->unique();
             $table->tinyInteger('situacion');
         });

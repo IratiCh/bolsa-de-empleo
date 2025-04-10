@@ -19,7 +19,7 @@ class Empresa extends Model
 
     public function ofertas()
     {
-        return $this->belongsToMany(Oferta::class, 'ofertas_empresa', 'id_empresa', 'id_oferta');
+        return $this->hasMany(Oferta::class, 'id_emp');
     }
 
     public $timestamps = false;

@@ -2,143 +2,127 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Demandante;
-use App\Models\Oferta;
-use App\Models\Titulo;
 use Illuminate\Http\Request;
+use App\Models\Demandante;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class DemandanteController extends Controller
 {
-    // Crear un nuevo demandante
-    public function store(Request $request)
+    public function getPerfil($id)
     {
-        $validated = $request->validate([
-            'dni' => 'required|string|max:9|unique:demandante,dni',
-            'nombre' => 'required|string|max:45',
-            'ape1' => 'required|string|max:45',
-            'ape2' => 'required|string|max:45',
-            'tel_movil' => 'required|string|max:9',
-            'email' => 'required|email|max:45|unique:demandante,email',
-            'situacion' => 'required|boolean',
-        ]);
+        try {
+            $usuario = User::where('id', $userId)
+                          ->where('rol', 'demandante')
+                          ->first();
 
-        $demandante = Demandante::create($validated);
+            if (!$usuario) {
+                return response()->json(['error' => 'Usuario no encontrado'], 404);
+            }
 
-        return response()->json(['message' => 'Demandante creado correctamente', 'demandante' => $demandante], 201);
-    }
+            // Buscar el demandante por email
+            $demandante = Demandante::where('email', $usuario->email)->first();
 
-    // Listar todos los demandantes
-    public function index()
-    {
-        return response()->json(Demandante::all());
-    }
+            if (!$demandante) {
+                return response()->json(['error' => 'Demandante no encontrado'], 404);
+            }
 
-    // Mostrar un demandante por ID
-    public function show($id)
-    {
-        $demandante = Demandante::with('titulos')->find($id);
-        if (!$demandante) {
-            return response()->json(['message' => 'Demandante no encontrado'], 404);
+            if (empty($usuario->id_dem)) {
+                $usuario->update(['id_dem' => $demandante->id]);
+            }
+
+            return response()->json([
+                'demandante' => [
+                    'id' => $demandante->id,
+                    'nombre' => $demandante->nombre,
+                    'ape1' => $demandante->ape1,
+                    'ape2' => $demandante->ape2,
+                    'tel_movil' => $demandante->tel_movil,
+                    'email' => $demandante->email,
+                    'user_id' => $usuario->id
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error("Error al obtener perfil demandante: " . $e->getMessage());
+            return response()->json(['error' => 'Error al cargar perfil'], 500);
         }
-
-        return response()->json($demandante);
     }
 
-    // Actualizar un demandante
-    public function update(Request $request, $id)
+    public function actualizarPerfil(Request $request, $id)
     {
-        $demandante = Demandante::find($id);
-        if (!$demandante) {
-            return response()->json(['message' => 'Demandante no encontrado'], 404);
-        }
+        try {
+            DB::beginTransaction();
 
-        $validated = $request->validate([
-            'dni' => 'sometimes|string|max:9|unique:demandante,dni,' . $demandante->id,
-            'nombre' => 'sometimes|string|max:45',
-            'ape1' => 'sometimes|string|max:45',
-            'ape2' => 'sometimes|string|max:45',
-            'tel_movil' => 'sometimes|string|max:9',
-            'email' => 'sometimes|email|max:45|unique:demandante,email,' . $demandante->id,
-            'situacion' => 'sometimes|boolean',
-        ]);
+            $usuario = User::where('id', $userId)
+                          ->where('rol', 'demandante')
+                          ->first();
 
-        $demandante->update($validated);
+            if (!$usuario) {
+                return response()->json(['error' => 'Usuario no encontrado'], 404);
+            }
+            
+            $demandante = Demandante::where('email', $usuario->email)->first();
+            if (!$demandante) {
+                return response()->json(['error' => 'Demandante no encontrado'], 404);
+            }
 
-        return response()->json(['message' => 'Demandante actualizado', 'demandante' => $demandante]);
-    }
+            // Validación
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:45',
+                'ape1' => 'required|string|max:45',
+                'ape2' => 'nullable|string|max:45',
+                'tel_movil' => 'required|string|max:9|regex:/^[0-9]{9}$/',
+                'email' => [
+                    'required',
+                    'email',
+                    'max:45',
+                    Rule::unique('demandante', 'email')->ignore($demandante->id),
+                    Rule::unique('usuarios', 'email')->ignore($usuario->id)
+                ],
+                'contrasena_hash' => 'nullable|string|min:6'
+            ], [
+                'tel_movil.regex' => 'El teléfono debe tener 9 dígitos numéricos',
+                'email.unique' => 'Este email ya está registrado'
+            ]);
 
-    // Eliminar un demandante
-    public function destroy($id)
-    {
-        $demandante = Demandante::find($id);
-        if (!$demandante) {
-            return response()->json(['message' => 'Demandante no encontrado'], 404);
-        }
+            // Actualizar tabla demandante
+            $demandante->update([
+                'nombre' => $validated['nombre'],
+                'ape1' => $validated['ape1'],
+                'ape2' => $validated['ape2'],
+                'tel_movil' => $validated['tel_movil'],
+                'email' => $validated['email']
+            ]);
 
-        $demandante->delete();
-
-        return response()->json(['message' => 'Demandante eliminado']);
-    }
-
-    // Actualizar los títulos de un demandante
-    public function updateTitulos(Request $request, $id)
-    {
-        $demandante = Demandante::find($id);
-        if (!$demandante) {
-            return response()->json(['message' => 'Demandante no encontrado'], 404);
-        }
-
-        $validated = $request->validate([
-            'titulos' => 'required|array',
-            'titulos.*.id' => 'required|exists:titulos,id',
-            'titulos.*.centro' => 'nullable|string|max:45',
-            'titulos.*.año' => 'nullable|string|max:45',
-            'titulos.*.cursando' => 'nullable|string|max:45',
-        ]);
-
-        $syncData = [];
-        foreach ($validated['titulos'] as $titulo) {
-            $syncData[$titulo['id']] = [
-                'centro' => $titulo['centro'] ?? null,
-                'año' => $titulo['año'] ?? null,
-                'cursando' => $titulo['cursando'] ?? null,
+            // Actualizar tabla usuarios
+            $updateData = [
+                'email' => $validated['email']
             ];
+    
+            if (!empty($validated['contrasena_hash'])) {
+                $updateData['contrasena_hash'] = Hash::make($validated['contrasena_hash']);
+            }
+    
+            $usuario->update($updateData);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Perfil actualizado correctamente',
+                'email_updated' => $usuario->email !== $validated['email']
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage(), 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al actualizar perfil del demandante: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al actualizar el perfil'], 500);
         }
-
-        $demandante->titulos()->sync($syncData);
-
-        return response()->json(['message' => 'Títulos actualizados correctamente']);
     }
 
-    // Para futuras mejoras en la experiencia del usuario
-    // Inscripciones del demandante
-    public function inscripciones($id)
-    {
-        $demandante = Demandante::with('inscripciones')->find($id);
-        if (!$demandante) {
-            return response()->json(['message' => 'Demandante no encontrado'], 404);
-        }
-
-        return response()->json($demandante->inscripciones);
-    }
-
-    // Ofertas abiertas
-    public function ofertas()
-    {
-        $ofertas = Oferta::where('abierta', true)->get();
-        return response()->json($ofertas);
-    }
-
-    // Ofertas filtradas por título
-    public function ofertasPorTitulacion($tituloId)
-    {
-        $titulo = Titulo::find($tituloId);
-        if (!$titulo) {
-            return response()->json(['message' => 'Título no encontrado'], 404);
-        }
-
-        $ofertas = $titulo->ofertas()->where('abierta', true)->get();
-
-        return response()->json($ofertas);
-    }
 }

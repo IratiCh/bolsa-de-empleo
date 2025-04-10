@@ -54,7 +54,7 @@ function DashboardEmpresa() {
             },
         });
         if (!response.ok){
-            throw new Error("Error al cerrar la oferta");
+            setError("Error al cerrar la oferta");
         }
 
         // Actualiza el estado de la oferta como cerrada (-1)
@@ -118,7 +118,7 @@ function DashboardEmpresa() {
             case 1: // Oferta asignada
                 return (
                     <>
-                        <button className="btn-asignada" disabled>
+                        <button className="btn-modificar" disabled>
                             ASIGNADA
                         </button>
                         <button className="btn-cerrar" disabled>
