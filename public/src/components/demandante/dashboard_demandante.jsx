@@ -6,14 +6,17 @@ import "../../../css/styles.css";
 function DashboardDemandante() {
 
     const navigate = useNavigate();
+    // Estado local que almacena la lista de ofertas laborales.
     const [ofertas, setOfertas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    // Estado local para almacenar el término de búsqueda ingresado por el usuario.
     const [searchTerm, setSearchTerm] = useState('');
+    // Estado local para almacenar las ofertas filtradas con base en el término de búsqueda.
     const [filteredOfertas, setFilteredOfertas] = useState([]);
 
 
-    // Verificar autenticación
+    // Comprueba si existe un usuario autenticado. Si no, redirige al inicio de sesión.
     if (!localStorage.getItem('usuario')) {
         navigate('/login', { replace: true });
     } else {
@@ -23,43 +26,51 @@ function DashboardDemandante() {
         }
     }
 
-    // Obtener ofertas
+     // Función para cargar las ofertas disponibles desde el backend.
     useEffect(() => {
         
         const fetchOfertas = async () => {
             try {
+                // Comprueba la existencia de un usuario autenticado y que pertenece al rol de demandante.
                 const usuario = JSON.parse(localStorage.getItem('usuario'));
                 if (!usuario || !usuario.id_dem) {
                     navigate('/login', { replace: true });
                     return;
                 }
 
+                // Solicita la lista de ofertas para el demandante autenticado.
                 const response = await fetch(`/api/demandante/ofertas?id_dem=${usuario.id_dem}`);
                 
+                // Si la solicitud fue exitosa, actualiza los estados de ofertas y ofertas filtradas.
                 if (response.ok) {
-
                     const data = await response.json();
                     setOfertas(data);
                     setFilteredOfertas(data);
-                    
                 }else{
+                    // Maneja errores si la respuesta no es exitosa.
                     setError("Error al cargar las ofertas");
                 }
             } catch (error) {
+                // Captura errores durante la solicitud al backend.
                 setError(error.message);
             } finally {
+                // Finaliza el estado de carga.
                 setLoading(false);
             }
         };
+        // Llama a la función para cargar las ofertas cuando el componente se monta.
         fetchOfertas();
     }, [navigate]);
 
-    // Manejar búsqueda
+    // Función para filtrar las ofertas basándose en el término de búsqueda ingresado.
     const handleSearch = (e) => {
         e.preventDefault();
+
+        // Si no hay término de búsqueda, muestra todas las ofertas.
         if (searchTerm.trim() === '') {
             setFilteredOfertas(ofertas);
         } else {
+            // Filtra las ofertas que coinciden con el término de búsqueda.
             const filtered = ofertas.filter(oferta =>
                 oferta.nombre.toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -67,18 +78,18 @@ function DashboardDemandante() {
         }
     };
 
-    // Manejar limpiar búsqueda
+    // Función para restablecer el término de búsqueda y mostrar todas las ofertas.
     const handleClearSearch = () => {
         setSearchTerm('');
         setFilteredOfertas(ofertas);
     };
 
-    // Redirigir a detalles de oferta
+    // Función para redirigir al usuario a la página de detalles de una oferta específica.
     const handleVerOferta = (id) => {
         navigate(`/demandante/oferta/${id}`);
     };
 
-    // Formatear fecha
+    // Función para formatear una fecha en un formato legible.
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('es-ES', options);

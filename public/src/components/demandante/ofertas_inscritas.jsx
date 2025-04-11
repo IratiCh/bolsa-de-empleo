@@ -115,12 +115,21 @@ function OfertasInscritas() {
                                             {oferta.breve_desc || 'Sin descripción breve'}
                                         </td>
                                         <td>
-                                            <button 
-                                                className="btn-cancelar"
-                                                onClick={() => handleCancelarInscripcion(oferta.id)}
-                                            >
-                                                CANCELAR INSCRIPCIÓN
-                                            </button>
+                                            {oferta.abierta === 0 ? (
+                                                <button 
+                                                    className="btn-cancelar"
+                                                    onClick={() => handleCancelarInscripcion(oferta.id)}
+                                                >
+                                                    CANCELAR INSCRIPCIÓN
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    className="btn-cancelar" 
+                                                    disabled
+                                                >
+                                                    OFERTA CERRADA
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))

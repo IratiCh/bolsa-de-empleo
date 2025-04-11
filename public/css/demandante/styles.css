@@ -120,6 +120,17 @@ table {
     font-weight: 700;
 }
 
+.DIV-DEMANDANTE .btn-cancelar:disabled{
+    background-color: var(--color-btn-elim-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    border: 0;
+    font-weight: 700;
+    cursor: default;
+}
+
 .btn-cancelar:hover {
     background-color: var(--color-btn-elim-dark);
 }

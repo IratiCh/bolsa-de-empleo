@@ -5,35 +5,46 @@ import "../../../css/styles.css";
 
 const DashboardCentro = () => {
     const navigate = useNavigate();
+    // Estado local para almacenar la lista de empresas pendientes por validar.
     const [empresas, setEmpresas] = useState([]);
+    // Estado local para indicar si los datos aún se están cargando.
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    // Verifica si el usuario está autenticado. 
+    // Si no hay información en el almacenamiento local, redirige al inicio de sesión.
     if (!localStorage.getItem('usuario')) {
         navigate('/login', { replace: true });
     }
 
     useEffect(() => {
         const fetchEmpresas = async () => {
+            // Función para obtener la lista de empresas desde el servidor.
             try {
+                // Solicita al backend las empresas pendientes de validación.
                 const response = await fetch('/api/centro/empresas-pendientes');
                 
+                // Si la respuesta no es exitosa, actualiza el estado con un mensaje de error.
                 if (!response.ok) {
                     setError('Error al cargar empresas');
                 }
                 
+                // Convierte la respuesta en formato JSON y actualiza el estado de empresas.
                 const data = await response.json();
                 setEmpresas(data);
             } catch (err) {
                 setError(err.message);
             } finally {
+                // Independientemente del resultado, marca el estado de carga como falso.
                 setLoading(false);
             }
         };
 
+        // Ejecuta la función de obtención de datos cuando el componente se monta.
         fetchEmpresas();
     }, []);
 
+    // Función para validar o rechazar una empresa, dependiendo de la acción solicitada.
     const handleValidacion = async (empresaId, accion) => {
         try {
             const response = await fetch(`/api/centro/validar-empresa/${empresaId}`, {
@@ -46,10 +57,11 @@ const DashboardCentro = () => {
     
             const data = await response.json();
     
+            // Si la respuesta fue exitosa, actualiza el estado de la empresa validada.
             if (response.ok && data.success) {
-                // Actualiza el estado local eliminando la empresa validada
                 setEmpresas(empresas.filter(empresa => empresa.id !== empresaId));
             } else {
+                // Muestra un mensaje de error si la validación no fue exitosa.
                 setError(data.message || 'Error al procesar la validación');
             }
         } catch (err) {

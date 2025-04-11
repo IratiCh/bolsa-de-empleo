@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import "../../../css/demandante/styles.css";
@@ -5,60 +6,169 @@ import "../../../css/styles.css";
 
 function PerfilDemandante() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
+    const [demandanteOriginal, setDemandanteOriginal] = useState({
+        nombre: '',
+        ape1: '',
+        ape2: '',
+        email: ''
+      });
+      
+      const [demandanteEdicion, setDemandanteEdicion] = useState({
         nombre: '',
         ape1: '',
         ape2: '',
         tel_movil: '',
-        email: '',
         contrasena_hash: ''
-    });
-    const [loading, setLoading] = useState(true);
+      });
+    const [titulos, setTitulos] = useState([
+        { titulo_id: '', centro: '', año: '', cursando: '' },
+        { titulo_id: '', centro: '', año: '', cursando: '' }
+    ]);
+    const [allTitulos, setAllTitulos] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({
+        nombre: '',
+        ape1: '',
+        ape2: '',
+        tel_movil: '',
+        contrasena_hash: '',
+        titulos: []
+    });
     const [success, setSuccess] = useState('');
 
+    // Verificar autenticación
     useEffect(() => {
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (!usuario) {
+            navigate('/login');
+            return;
+        }
+        
         const cargarPerfil = async () => {
             try {
-                const usuario = JSON.parse(localStorage.getItem('usuario'));
-                if (!usuario?.id_dem) {
-                    navigate('/login');
-                    return;
-                }
-
-                const response = await fetch(`/api/demandante/perfil/${usuario.id_dem}`);
+                setLoading(true);
+                const response = await fetch(`/api/demandante/perfil/${usuario.id_dem}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
                 const data = await response.json();
                 
-                if (!response.ok) setError(data.error || 'Error en la respuesta');
-                if (!data.demandante) setError('Estructura de datos incorrecta');
+                if (response.ok) {
+                    // Datos originales (para mostrar en el header)
+                    setDemandanteOriginal({
+                        nombre: data.demandante.nombre,
+                        ape1: data.demandante.ape1,
+                        ape2: data.demandante.ape2 || '',
+                        email: data.demandante.email
+                    });
+                    
+                    // Datos para edición (formulario)
+                    setDemandanteEdicion({
+                        nombre: data.demandante.nombre,
+                        ape1: data.demandante.ape1,
+                        ape2: data.demandante.ape2 || '',
+                        tel_movil: data.demandante.tel_movil,
+                        email: data.demandante.email,
+                        contrasena_hash: ''
+                    });
 
-                setFormData({
-                    nombre: data.demandante.nombre,
-                    ape1: data.demandante.ape1,
-                    ape2: data.demandante.ape2,
-                    tel_movil: data.demandante.tel_movil,
-                    email: data.demandante.email,
-                    contrasena_hash: ''
-                });
+                    const titulosFormateados = data.titulos.map(titulo => ({
+                        ...titulo,
+                        año: titulo.año ? `${titulo.año.substring(0, 4)}-01-01` : ''
+                    }));
 
+                    setTitulos([
+                        titulosFormateados[0] || { titulo_id: '', centro: '', año: '', cursando: '' },
+                        titulosFormateados[1] || { titulo_id: '', centro: '', año: '', cursando: '' }
+                    ]);
+                    
+                    // Todos los títulos disponibles
+                    setAllTitulos(data.allTitulos || []);
+                } else {
+                    setError(data.error || 'Error al cargar perfil');
+                    setErrorMessage(data.message || 'Error al cargar perfil');
+                }
             } catch (err) {
-                setError(err.message);
-                console.error("Error:", err);
+                setError('Error de conexión');
             } finally {
                 setLoading(false);
             }
         };
-
+        
         cargarPerfil();
     }, [navigate]);
 
-
-    const handleChange = (e) => {
+    const handleDatosChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setDemandanteEdicion(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleTituloChange = (index, field, value) => {
+        const nuevosTitulos = [...titulos];
+        nuevosTitulos[index] = { ...nuevosTitulos[index], [field]: value };
+        setTitulos(nuevosTitulos);
+    };
+
+    const handleSubmitDatos = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSuccess('');
+        setFieldErrors({
+            nombre: '',
+            ape1: '',
+            ape2: '',
+            tel_movil: '',
+            contrasena_hash: ''
+        });
+        
+        try {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            
+            const datosParaEnviar = {
+                nombre: demandanteEdicion.nombre,
+                ape1: demandanteEdicion.ape1,
+                ape2: demandanteEdicion.ape2,
+                tel_movil: demandanteEdicion.tel_movil,
+                contrasena_hash: demandanteEdicion.contrasena_hash
+            };
+            
+            const response = await fetch(`/api/demandante/actualizar-datos/${usuario.id_dem}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(datosParaEnviar)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                
+                setSuccess('Datos actualizados correctamente');
+
+                setDemandanteOriginal({
+                    nombre: demandanteEdicion.nombre,
+                    ape1: demandanteEdicion.ape1,
+                    ape2: demandanteEdicion.ape2,
+                    email: demandanteEdicion.email
+                    });
+            } else {
+                setError(data.error || data.message || 'Error al actualizar datos');
+            }
+
+        } catch (error) {
+            setError('Error de conexión');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmitTitulos = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -66,31 +176,34 @@ function PerfilDemandante() {
         
         try {
             const usuario = JSON.parse(localStorage.getItem('usuario'));
-            const response = await fetch(`/api/demandante/actualizar/${usuario.id_dem}`, {
-                method: 'PUT',
+            const titulosParaEnviar = titulos
+                .filter(t => t.titulo_id !== '')
+                .map(titulo => ({
+                    ...titulo,
+                    id: titulo.id || null, // Incluir ID si existe
+                    año: titulo.año || null // Asegurar formato de fecha
+            }));
+            
+            const response = await fetch(`/api/demandante/guardar-titulos/${usuario.id_dem}`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ 
+                    titulos: titulosParaEnviar 
+                })
             });
-
+            
             const data = await response.json();
             
-            if (!response.ok) {
-                setError(data.error || 'Error al actualizar');
+            if (response.ok) {
+                setSuccess('Títulos actualizados correctamente');
+            } else {
+                setError(data.error || 'Error al actualizar títulos');
             }
-            
-            setSuccess('Perfil actualizado correctamente');
-            
-            // Actualizar email en localStorage si cambió
-            if (data.email_updated) {
-                const updatedUser = {...usuario, email: formData.email};
-                localStorage.setItem('usuario', JSON.stringify(updatedUser));
-            }
-
         } catch (error) {
-            setError(error.message);
+            setError('Error de conexión');
         } finally {
             setLoading(false);
         }
@@ -106,7 +219,8 @@ function PerfilDemandante() {
         navigate('/demandante/ofertas_inscritas');
     };
 
-    if (loading) return <div className="loading">Cargando perfil...</div>;
+
+    if (loading) return <div className="loading">Cargando...</div>;
 
     return (
         <div className="DIV-DEMANDANTE PERFIL">
@@ -128,8 +242,8 @@ function PerfilDemandante() {
                     <div className="perfil-info">
                         <img src="/img/email.png" alt="Email"/>
                         <div className="perfil-texto">
-                            <p>{formData.nombre} {formData.ape1} {formData.ape2}</p>
-                            <p>{formData.email}</p>
+                            <p>{demandanteOriginal.nombre} {demandanteOriginal.ape1} {demandanteOriginal.ape2}</p>
+                            <p>{demandanteOriginal.email}</p>
                         </div>
                     </div>
             
@@ -143,7 +257,7 @@ function PerfilDemandante() {
                     </div>
                 </div>
         
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitDatos}>
                     <table className="table-perfil">
                         <tbody>
                             <tr><td colSpan="2"><h1>Datos Personales</h1></td></tr>
@@ -154,8 +268,8 @@ function PerfilDemandante() {
                                         type="text" 
                                         name="nombre" 
                                         required 
-                                        value={formData.nombre}
-                                        onChange={handleChange}
+                                        value={demandanteEdicion.nombre}
+                                        onChange={handleDatosChange}
                                     />
                                 </td>
                                 <td>
@@ -164,8 +278,8 @@ function PerfilDemandante() {
                                         type="text" 
                                         name="ape1" 
                                         required 
-                                        value={formData.ape1}
-                                        onChange={handleChange}
+                                        value={demandanteEdicion.ape1}
+                                        onChange={handleDatosChange}
                                     />
                                 </td>
                             </tr>
@@ -175,20 +289,19 @@ function PerfilDemandante() {
                                     <input 
                                         type="text" 
                                         name="ape2" 
-                                        value={formData.ape2}
-                                        onChange={handleChange}
+                                        required 
+                                        value={demandanteEdicion.ape2}
+                                        onChange={handleDatosChange}
                                     />
                                 </td>
                                 <td>
                                     <label>Teléfono</label>
                                     <input 
-                                        type="tel" 
+                                        type="number" 
                                         name="tel_movil" 
                                         required
-                                        pattern="[0-9]{9}"
-                                        maxLength="9"
-                                        value={formData.tel_movil}
-                                        onChange={handleChange}
+                                        value={demandanteEdicion.tel_movil}
+                                        onChange={handleDatosChange}
                                     />
                                 </td>
                             </tr>
@@ -198,26 +311,147 @@ function PerfilDemandante() {
                                     <input 
                                         type="password" 
                                         name="contrasena_hash"
-                                        value={formData.contrasena_hash}
-                                        onChange={handleChange}
-                                        placeholder="Nueva contraseña"
+                                        required
+                                        value={demandanteEdicion.contrasena_hash}
+                                        onChange={handleDatosChange}
                                     />
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    
                     {error && <div className="error">{error}</div>}
                     {success && <div className="success">{success}</div>}
-                    
                     <div className="btn-datos">
-                        <button type="submit" disabled={loading} className="act-datos">
-                            {loading ? 'Actualizando...' : 'ACTUALIZAR DATOS'}
-                        </button>
+                        <button type="submit" className="act-datos">{loading ? 'PROCESANDO...' : 'ACTUALIZAR DATOS'}</button>
+                    </div>
+                </form>
+              
+                <form onSubmit={handleSubmitTitulos}>
+                    <table className="table-titulos">
+                        <tbody>
+                            
+                            <tr>
+                                <td colspan="2">
+                                    <h1>Mis Títulos</h1>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h2>Primer Título</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="nombre">Nombre</label>
+                                    <select
+                                        value={titulos[0].titulo_id}
+                                        onChange={(e) => handleTituloChange(0, 'titulo_id', e.target.value)}
+                                        required
+                                    >
+                                        <option value="" disabled>Seleccione un título</option>
+                                        {allTitulos.map(titulo => (
+                                            <option key={titulo.id} value={titulo.id}>
+                                                {titulo.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <label>Centro</label>
+                                    <input
+                                        type="text"
+                                        value={titulos[0].centro}
+                                        onChange={(e) => handleTituloChange(0, 'centro', e.target.value)}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>Situación del Curso</label>
+                                    <select
+                                        value={titulos[0].cursando}
+                                        onChange={(e) => handleTituloChange(0, 'cursando', e.target.value)}
+                                        required
+                                    >
+                                        <option value="" disabled>Seleccione</option>
+                                        <option value="Cursando">Cursando</option>
+                                        <option value="Finalizado">Finalizado</option>
+                                        <option value="Abandonado">Abandonado</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <label>Año</label>
+                                    <input
+                                        type="date"
+                                        value={titulos[0].año}
+                                        onChange={(e) => handleTituloChange(0, 'año', e.target.value)}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h2>Segundo Título</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="nombre">Nombre</label>
+                                    <select
+                                        value={titulos[1].titulo_id}
+                                        onChange={(e) => handleTituloChange(1, 'titulo_id', e.target.value)}
+                                    >
+                                        <option value="" disabled>Seleccione un título</option>
+                                        {allTitulos.map(titulo => (
+                                            <option key={titulo.id} value={titulo.id}>
+                                                {titulo.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <label>Centro</label>
+                                    <input
+                                        type="text"
+                                        value={titulos[1].centro}
+                                        onChange={(e) => handleTituloChange(1, 'centro', e.target.value)}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>Situación del Curso</label>
+                                    <select
+                                        value={titulos[1].cursando}
+                                        onChange={(e) => handleTituloChange(1, 'cursando', e.target.value)}
+                                    >
+                                        <option value="" disabled>Seleccione</option>
+                                        <option value="Cursando">Cursando</option>
+                                        <option value="Finalizado">Finalizado</option>
+                                        <option value="Abandonado">Abandonado</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <label>Año</label>
+                                    <input
+                                        type="date"
+                                        value={titulos[1].año}
+                                        onChange={(e) => handleTituloChange(1, 'año', e.target.value)}
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {error && <div className="error">{error}</div>}
+                    {success && <div className="success">{success}</div>}
+                    <div className="btn-info">
+                        <button type="submit" className="act-info">{loading ? 'PROCESANDO...' : 'GUARDAR TÍTULOS'}</button>
                     </div>
                 </form>
             </div>
-
+        
+        
             <footer className="global-footer footer-perfil">
                 <div className="footer-container">
                     <div className="footer-section global-section">
@@ -261,15 +495,15 @@ function PerfilDemandante() {
                     <a href="#">Términos de Servicio</a>
                     </p>
                     <div className="social-icons">
-                    <img src="/img/fc-white.png" />
-                    <img src="/img/in-white.png" />
-                    <img src="/img/tw-white.png" />
-                    <img src="/img/pint-white.png" />
+                    <img src="/img/fc-gray.png" />
+                    <img src="/img/in-gray.png" />
+                    <img src="/img/tw-gray.png" />
+                    <img src="/img/pint-gray.png" />
                     </div>
                 </div>
             </footer>
       </div>
     );
-}
+};
 
 export default PerfilDemandante;

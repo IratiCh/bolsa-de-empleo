@@ -4,45 +4,58 @@ import "../../../css/empresa/styles.css";
 import "../../../css/styles.css";
 
 function AsignarOferta() {
+    // Obtener el parámetro id 
     const { id } = useParams();
     const navigate = useNavigate();
+    // Estado para almacenar los detalles de la oferta actual.
     const [oferta, setOferta] = useState(null);
+    // Estado para almacenar la lista de candidatos inscritos en la oferta.
     const [inscritos, setInscritos] = useState([]);
+    // Estado para almacenar la lista de posibles candidatos no inscritos.
     const [noInscritos, setNoInscritos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
+        // Obtiene la información del usuario autenticado desde el almacenamiento local.
         const usuario = JSON.parse(localStorage.getItem('usuario'));
         if (!usuario || !usuario.id_emp) {
             navigate('/login', { replace: true });
             return;
         }
 
+        // Función para cargar los datos de la oferta, inscritos y no inscritos.
         const cargarDatos = async () => {
             try {
                 setLoading(true);
                 setError('');
                 
+                // Solicita los datos de la oferta al backend utilizando el ID de la oferta.
                 const response = await fetch(`/api/empresa/asignar_oferta/${id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
+                        // Incluye el token de autorización para validar al usuario.
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 
+                // Si la solicitud no es exitosa, muestra un mensaje de error.
                 if (!response.ok) {
                     const errorData = await response.json();
                     setError(errorData.error || `Error ${response.status}`);
                 }
 
                 const data = await response.json();
+                // Almacena los datos de la oferta
                 setOferta(data.oferta);
+                // Almacena la lista de candidatos inscritos.
                 setInscritos(data.inscritos);
+                // Almacena la lista de candidatos no inscritos.
                 setNoInscritos(data.noInscritos);
             } catch (err) {
+                // Captura errores durante la comunicación con el servidor.
                 setError(err.message);
                 console.error("Error:", err);
             } finally {
@@ -50,14 +63,18 @@ function AsignarOferta() {
             }
         };
 
+        // Ejecuta la función para cargar los datos cuando el componente se monta.
         cargarDatos();
     }, [id, navigate]);
 
+    // Función para asignar un demandante a la oferta actual.
     const handleAsignar = async (idDemandante) => {
         try {
+            // Limpia mensajes previos.
             setError('');
             setSuccessMessage('');
             
+            // Realiza una solicitud POST para asignar el demandante.
             const response = await fetch(`/api/empresa/asignar_oferta/${id}/asignar`, {
                 method: 'POST',
                 headers: {
@@ -72,19 +89,24 @@ function AsignarOferta() {
     
             const data = await response.json();
             
+            // Si hay un error en la asignación, muestra el mensaje correspondiente.
             if (!response.ok) {
                 setError(data.error || 'Error al adjudicar');
             }
     
+            // Muestra el mensaje de éxito.
             setSuccessMessage(data.message);
+            // Redirige al panel principal de la empresa.
             navigate('/empresa/dashboard_empresa');
     
         } catch (err) {
+            // Captura errores durante la solicitud de asignación.
             console.error("Error al adjudicar:", err);
             setError(err.message);
         }
     };
 
+    // Función para cerrar sesión y limpiar datos del usuario.
     const handleLogout = () => {
         localStorage.removeItem('usuario');
         localStorage.removeItem('token');

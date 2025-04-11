@@ -5,6 +5,7 @@ import "../../../css/styles.css";
 
 function CrearOferta() {
   const navigate = useNavigate();
+  // Estado inicial para almacenar los datos del formulario de creación de oferta.
     const [formData, setFormData] = useState({
         nombre: '',
         breve_desc: '',
@@ -15,12 +16,16 @@ function CrearOferta() {
         id_tipo_cont: '',
         titulos: []
     });
+    // Estado para almacenar los tipos de contrato disponibles.
     const [tiposContrato, setTiposContrato] = useState([]);
+    // Estado para almacenar los títulos disponibles para seleccionar.
     const [titulos, setTitulos] = useState([]);
+    // Estado para indicar si los datos aún se están cargando.
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Verifica si el usuario está autenticado. Si no, lo redirige al inicio de sesión.
     if (!localStorage.getItem('usuario')) {
       navigate('/login', { replace: true });
     } else { 
@@ -31,62 +36,75 @@ function CrearOferta() {
 
     }
 
+    // Función para cargar los tipos de contrato y los títulos disponibles desde el backend.
     useEffect(() => {
-      // Cargar tipos de contrato y títulos
       const fetchData = async () => {
           try {
               setLoading(true);
               
-              // Obtener tipos de contrato
+              // Solicita los tipos de contrato al servidor.
               const tiposResponse = await fetch('/api/ofertas/tipos-contrato');
               const tiposData = await tiposResponse.json();
               
+              // Actualiza el estado con los tipos de contrato obtenidos.
               if (tiposData.success) {
                   setTiposContrato(tiposData.tipos);
               }
               
-              // Obtener títulos
+              // Solicita los títulos al servidor.
               const titulosResponse = await fetch('/api/ofertas/titulos');
               const titulosData = await titulosResponse.json();
               
+              // Actualiza el estado con los títulos obtenidos.
               if (titulosData.success) {
                   setTitulos(titulosData.titulos);
               }
               
           } catch (error) {
+            // Maneja errores durante la solicitud al servidor.
               setError('Error al cargar datos iniciales');
           } finally {
               setLoading(false);
           }
       };
       
+      // Ejecuta la función para cargar los datos al montar el componente.
       fetchData();
   }, []);
 
   const handleChange = (e) => {
+    // Función para actualizar los valores del formulario según los cambios del usuario.
       const { name, value } = e.target;
       setFormData(prev => ({
           ...prev,
+          // Actualiza el campo correspondiente en el estado formData.
           [name]: value
       }));
   };
 
+  // Función para actualizar los títulos seleccionados en el formulario.
   const handleSelectTitulo = (e, index) => {
       const { value } = e.target;
+      // Copia la lista actual de títulos seleccionados.
       const newTitulos = [...formData.titulos];
+      // Actualiza el título en el índice correspondiente.
       newTitulos[index] = value;
       setFormData(prev => ({
           ...prev,
+          // Actualiza el estado con la nueva lista de título.
           titulos: newTitulos
       }));
   };
 
   const handleSubmit = async (e) => {
+    // Previene el comportamiento predeterminado del formulario (recarga de la página).
       e.preventDefault();
+      // Resetea los mensajes y activa el estado de carga.
       setError('');
       setSuccess('');
       setLoading(true);
 
+      // Verifica si el usuario está autenticado y pertenece al rol de empresa.
       try {
         const usuario = JSON.parse(localStorage.getItem('usuario'));
         if (!usuario || !usuario.id_emp) {
@@ -94,6 +112,7 @@ function CrearOferta() {
           return;
         }
 
+        // Utiliza el método HTTP POST para enviar los datos del formulario al servidor.
         const response = await fetch('/api/ofertas/crear', {
             method: 'POST',
             headers: {
@@ -101,15 +120,20 @@ function CrearOferta() {
             },
             body: JSON.stringify({
                 ...formData,
+                // Filtra los títulos para eliminar entradas vacías.
                 titulos: formData.titulos.filter(t => t),
+                // Incluye el ID de la empresa en el cuerpo de la solicitud.
                 id_emp: usuario.id_emp
             })
           });
           
+          // Parsea la respuesta del servidor.
           const data = await response.json();
 
+          // Si la solicitud fue exitosa, muestra un mensaje de éxito.
           if (response.ok) {
             setSuccess('Oferta creada correctamente');
+            // Reinicia los campos del formulario.
             setError('');
             setFormData({ 
               nombre: '',
@@ -122,16 +146,19 @@ function CrearOferta() {
               titulos: []
             });
           }else {
+            // Si hay un error en la solicitud, muestra el mensaje correspondiente.
             setError(data.message || 'Error al crear oferta');
             setSuccess('');
           }
       } catch (error) {
+          // Captura errores durante la comunicación con el servidor.s
           setError(error.message);
       } finally {
           setLoading(false);
       }
   };
 
+  // Función para cerrar sesión y limpiar los datos del usuario.
   const handleLogout = () => {
       localStorage.removeItem('usuario');
       navigate('/', { replace: true });

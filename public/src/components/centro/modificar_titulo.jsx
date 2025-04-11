@@ -6,26 +6,32 @@ import "../../../css/styles.css";
 
 const GestionTitulos = () => {
     const navigate = useNavigate();
+    // Obtener el parámetro "id" de la URL.
     const { id } = useParams();
+    // Estado local para almacenar el nombre del título que se está editando.
     const [nombre, setNombre] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
 
+        // Comprueba si el usuario está autenticado. Si no, lo redirige al inicio de sesión.
         if (!localStorage.getItem('usuario')) {
             navigate('/login', { replace: true });
         }
 
-        // Cargar los datos del título a editar
+        // Función para cargar los datos del título desde el backend.
         const cargarTitulo = async () => {
             try {
+                // Solicitud GET para obtener los datos del título utilizando el ID de la URL.
                 const response = await fetch(`/api/centro/titulos/${id}`);
                 const data = await response.json();
                 
+                // Si la solicitud es exitosa y el título existe, actualiza el estado con su nombre.
                 if (response.ok && data.success) {
                     setNombre(data.titulo.nombre);
                 } else {
+                    // Si hay un error en la solicitud, muestra un mensaje de error.
                     setError( data.message || 'Error al cargar título');
                 }
             } catch (err) {
@@ -33,16 +39,19 @@ const GestionTitulos = () => {
             }
         };
 
+        // Llama a la función para cargar el título cuando el componente se monta.
         cargarTitulo();
 
     }, [navigate, id]);
 
+    // Funcion para modificar los datos del título
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
         try {
+            // Realiza una solicitud PUT para actualizar el título en el backend.
             const response = await fetch(`/api/centro/titulos/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -53,9 +62,11 @@ const GestionTitulos = () => {
 
             const data = await response.json();
 
+            // Si la solicitud es exitosa, establece un mensaje de éxito.
             if (response.ok && data.success) {
                 setSuccess('Título modificado correctamente');
             } else {
+                // Si ocurre un error, establece el mensaje de error.
                 if (data.errors) {
                     setError(data.errors);
                 } else {

@@ -5,6 +5,7 @@ import "../../css/styles.css";
 
 const RegistroEmpresa = () => {
 
+    // Estado inicial que contiene los datos del formulario de registro.
     const [formData, setFormData] = useState({
         nombre: '',
         localidad: '',
@@ -13,13 +14,16 @@ const RegistroEmpresa = () => {
         contrasena_hash: '',
         telefono: ''
     });
-
+    // Estado para almacenar mensajes de error
     const [errorMessage, setErrorMessage] = useState('');
+    // Estado para almacenar mensajes de éxito
     const [successMessage, setSuccessMessage] = useState('');
 
+    // Función para actualizar los valores en el estado formData cuando el usuario completa los campos del formulario.
     const handleChange = (e) => {
         setFormData({
             ...formData,
+            // Modifica el valor del campo correspondiente según el atributo "name".
             [e.target.name]: e.target.value
         });
     };
@@ -36,11 +40,14 @@ const RegistroEmpresa = () => {
                 body: JSON.stringify(formData),
             });
 
+            // Convierte los datos a json
             const data = await response.json();
 
+            // Si la solicitud al servidor fue exitosa:
             if (response.ok) {
                 setSuccessMessage('Usuario registrado. Espere a que se valide la cuenta antes de iniciar sesión.');
                 setErrorMessage('');
+                // Reinicia los campos del formulario para que queden vacíos.
                 setFormData({ 
                     nombre: '',
                     localidad: '',
@@ -50,10 +57,12 @@ const RegistroEmpresa = () => {
                     telefono: ''
                 });
             } else {
+                // Si hubo un error muestra el mensaje
                 setErrorMessage(data.message || 'Error en el registro'); 
                 setSuccessMessage('');
             }
         } catch (error) {
+            // Captura errores durante la comunicación con el servidor
             setErrorMessage('Hubo un error, por favor intenta nuevamente.');
             setSuccessMessage('');
         }

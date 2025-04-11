@@ -1,29 +1,38 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import "../../css/styles.css";
+import React, { useState } from 'react'; // Importación de React y useState para manejar estados locales.
+import { Link, useNavigate } from 'react-router-dom'; // Importación de herramientas para navegación y enlaces entre rutas.
+import "../../css/styles.css"; // Importación de estilos CSS.
 
 const Login = () => {
+    // Permite navegar entre rutas.
     const navigate = useNavigate();    
     
+    // Estado local para almacenar el correo electrónico del usuario.
     const [email, setEmail] = useState('');
+    // Estado local para almacenar la contraseña ingresada.
     const [password, setPassword] = useState('');
+    // Estado local para mostrar un mensaje de error en caso de que ocurra un problema.
     const [errorMessage, setErrorMessage] = useState('');
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Lógica para enviar los datos de inicio de sesión al backend
+        // Previene el comportamiento por defecto del formulario (recargar la página).
+        
         try {
             const response = await fetch('/api/auth/login', {
+                // Envía los datos de inicio de sesión al backend mediante una solicitud HTTP POST.
                 method: 'POST',
+                // Especifica que los datos enviados están en formato JSON.
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                // Convierte el objeto con los datos del formulario en una cadena JSON.
                 body: JSON.stringify({ email, contrasena_hash: password }),
             });
 
+            // Convierte la respuesta en formato JSON.
             const data = await response.json();
 
+            // Si la solicitud fue exitosa:
             if (response.ok) {
                 const userData = {
                     id: data.id,
@@ -32,19 +41,22 @@ const Login = () => {
                     rol: data.rol,
                     // Solo agregar id_emp si existe en la respuesta
                     ...(data.id_emp && { id_emp: data.id_emp }),
+                    // Incluye validado solo si está definido.
                     ...(data.validado !== undefined && { validado: data.validado }),
-
+                    // Incluye id_dem solo si está presente en la respuesta.
                     ...(data.id_dem && { id_dem: data.id_dem }),
                 };
     
+                // Almacena los datos del usuario en el almacenamiento local del navegador.
                 localStorage.setItem('usuario', JSON.stringify(userData));
     
-
+                // Redirige al usuario a diferentes rutas dependiendo de su rol.
                 switch (data.rol) {
                     case 'demandante':
                         navigate('/demandante/dashboard_demandante');
                         break;
                     case 'empresa':
+                        // Maneja diferentes estados de validación para el rol "empresa".
                         switch (data.validado) {
                             case -1:
                                 setErrorMessage('Tu cuenta ha sido rechazada. Por favor contacta al administrador.');
@@ -62,14 +74,16 @@ const Login = () => {
                     case 'centro':
                         navigate('/centro/dashboard_centro');
                         break;
+                    // Muestra un mensaje de error si el rol no coincide con ninguno de los casos esperados.
                     default:
                         setErrorMessage('Rol desconocido');
                 }
             } else {
-                // Manejar errores, mostrar un mensaje de error si es necesario
+                // Muestra el mensaje de error proveniente del backend o un mensaje genérico.
                 setErrorMessage(data.message || 'Error de inicio de sesión');
             }
         } catch (error) {
+            // Muestra un mensaje de error genérico.
             setErrorMessage('Hubo un error, por favor intenta nuevamente.');
         }
     };

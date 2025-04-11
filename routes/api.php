@@ -60,8 +60,8 @@ Route::group(['prefix' => 'demandante'], function () {
 
 
     Route::get('/perfil/{id}', [DemandanteController::class, 'getPerfil']);
-    Route::put('/actualizar/{id}', [DemandanteController::class, 'actualizarPerfil']);
-    Route::post('/{id}/titulos', [DemandanteController::class, 'guardarTitulos']);
+    Route::put('/actualizar-datos/{id}', [DemandanteController::class, 'actualizarPerfil']);
+    Route::post('/guardar-titulos/{id}', [DemandanteController::class, 'guardarTitulo']);
 
     Route::get('/ofertas-inscritas', [OfertaDemandanteController::class, 'ofertasInscritas']);
     Route::delete('/ofertas/{id}/cancelar-inscripcion', [OfertaDemandanteController::class, 'cancelarInscripcion']);

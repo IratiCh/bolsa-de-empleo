@@ -6,34 +6,40 @@ import "../../../css/styles.css";
 function DetalleOferta() {
     const { id } = useParams();
     const navigate = useNavigate();
+    // Estado local para almacenar los detalles de la oferta.
     const [oferta, setOferta] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    // Estado local para verificar si el usuario está inscrito en la oferta.
     const [isInscrito, setIsInscrito] = useState(false);
+    // Estado local para indicar si se está procesando la inscripción.
     const [inscribiendo, setInscribiendo] = useState(false);
 
-    // Verificar autenticación
+    
+    // Obtiene la información del usuario desde el almacenamiento local.
     useEffect(() => {
+        // Obtiene la información del usuario desde el almacenamiento local.
         const usuario = JSON.parse(localStorage.getItem('usuario'));
         if (!usuario) {
             navigate('/login', { replace: true });
         }
     }, [navigate]);
 
-    // Obtener detalles de la oferta
+    // Función para cargar los detalles de la oferta desde el backend.
     useEffect(() => {
         const fetchOferta = async () => {
             try {
                 setLoading(true);
                 setError('');
                 
+                // Obtiene la información del usuario autenticado.
                 const usuario = JSON.parse(localStorage.getItem('usuario'));
                 if (!usuario?.id_dem) {
                     navigate('/login');
                     return;
                 }
 
-                // Obtener detalles de la oferta
+                // Solicita los detalles de la oferta al servidor.
                 const response = await fetch(`/api/demandante/ofertas/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -42,16 +48,19 @@ function DetalleOferta() {
                 
                 const data = await response.json(); // <-- Solo una vez
 
+                // Maneja errores si la solicitud no es exitosa.
                 if (!response.ok) {
                     setError(data.error || 'Error al cargar la oferta');
                     return;
                 }
 
+                // Maneja el caso en que no se recibieron datos válidos.
                 if (!data) {
                     setError('No se recibieron datos de la oferta');
                     return;
                 }
 
+                // Almacena los detalles de la oferta en el estado local.
                 setOferta(data);
 
                 // Verificar inscripción
@@ -71,6 +80,7 @@ function DetalleOferta() {
                     return;
                 }
 
+                // Actualiza el estado con la información de inscripción.
                 setIsInscrito(inscData.inscrito || false);
                                 
             } catch (err) {
@@ -81,14 +91,17 @@ function DetalleOferta() {
             }
         };
 
+        // Llama a la función para cargar los datos de la oferta cuando el componente se monta.
         fetchOferta();
     }, [id, navigate]);
 
+    // Función para inscribir al usuario en la oferta.
     const handleInscripcion = async () => {
         setInscribiendo(true);
         setError('');
         
         try {
+            // Obtiene la información del usuario desde el almacenamiento local.
             const usuario = JSON.parse(localStorage.getItem('usuario'));
             const response = await fetch(`/api/demandante/ofertas/${id}/inscribirse`, {
                 method: 'POST',
@@ -107,6 +120,7 @@ function DetalleOferta() {
                 setError(data.error || 'Error al inscribirse');
             }
             
+            // Actualiza el estado para indicar que el usuario está inscrito.
             setIsInscrito(true);
             
         } catch (err) {
@@ -117,6 +131,7 @@ function DetalleOferta() {
         }
     };
 
+    // Función para formatear una fecha en un formato legible.
     const formatDate = (dateString) => {
         if (!dateString) return 'No especificada';
         try {

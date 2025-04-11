@@ -1,10 +1,10 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../../css/styles.css";
 
 const RegistroDemandante = () => {
 
+    // Estado inicial del formulario, que contiene los datos del demandante.
     const [formData, setFormData] = useState({
         nombre: '',
         ape1: '',
@@ -15,12 +15,16 @@ const RegistroDemandante = () => {
         tel_movil: ''
     });
 
+    // Estado para almacenar mensajes de error
     const [errorMessage, setErrorMessage] = useState('');
+    // Estado para almacenar mensajes de éxito
     const [successMessage, setSuccessMessage] = useState('');
 
+    // Actualiza el estado del formulario dinámicamente cuando el usuario llena los campos.
     const handleChange = (e) => {
         setFormData({
             ...formData,
+            // Utiliza el atributo "name" del input para identificar qué valor se debe modificar.
             [e.target.name]: e.target.value
         });
     };
@@ -29,6 +33,7 @@ const RegistroDemandante = () => {
         e.preventDefault();
 
         try {
+            // Realiza una solicitud POST al backend para registrar al demandante.
             const response = await fetch('/api/auth/register_demandante', {
                 method: 'POST',
                 headers: {
@@ -37,11 +42,14 @@ const RegistroDemandante = () => {
                 body: JSON.stringify(formData),
             });
 
+            // Convierte la respuesta en formato json
             const data = await response.json();
 
+            // Si la solicitud fue exitosa, muestra un mensaje de éxito.
             if (response.ok) {
                 setSuccessMessage('Usuario registrado correctamente. ¡Ya puedes iniciar sesión!');
                 setErrorMessage('');
+                // Reinicia el estado del formulario para limpiarlo.
                 setFormData({ 
                     nombre: '',
                     ape1: '',
@@ -52,10 +60,12 @@ const RegistroDemandante = () => {
                     tel_movil: ''
                 });
             } else {
+                // Si hubo un error en la solicitud, muestra el mensaje correspondiente.
                 setErrorMessage(data.message || 'Error en el registro'); 
                 setSuccessMessage('');
             }
         } catch (error) {
+             // Maneja errores de conexión o problemas inesperados.
             setErrorMessage('Hubo un error, por favor intenta nuevamente.');
             setSuccessMessage('');
         }

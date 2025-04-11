@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; // useEffect y useState para manejar efectos secundarios y estados locales.
 import { Link, useNavigate } from 'react-router-dom';
+// Estilos CSS específicos para la página.
 import "../../../css/centro/styles.css";
 import "../../../css/styles.css";
 
 
 const CrearTitulo = () => {
     const navigate = useNavigate();
+    // Estado local para almacenar el nombre del título que se desea crear.
     const [nombre, setNombre] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Comprobación inicial para verificar si el usuario está autenticado.
     useEffect(() => {
         if (!localStorage.getItem('usuario')) {
+            // Si no hay un usuario en el almacenamiento local, redirige al inicio de sesión.
             navigate('/login', { replace: true });
         }
     }, [navigate]);
@@ -20,6 +24,7 @@ const CrearTitulo = () => {
         e.preventDefault();
 
         try {
+            // Envía una solicitud POST al backend para crear un nuevo título.
             const response = await fetch('/api/centro/titulos', {
                 method: 'POST',
                 headers: {
@@ -28,17 +33,22 @@ const CrearTitulo = () => {
                 body: JSON.stringify({ nombre })
             });
 
+            // Convierte la respuesta del servidor en formato JSON.
             const data = await response.json();
 
+            // Si la solicitud fue exitosa y el backend confirma el éxito:
             if (response.ok && data.success) {
                 setSuccess('Título creado correctamente');
                 setError('');
+                // Limpia los estados después de crear el título.
                 setNombre('');
             } else {
+                // Si hubo un error en la solicitud, muestra un mensaje de error
                 setError(data.message || 'Error al crear título');
                 setSuccess('');
             }
         } catch (err) {
+            // Captura errores durante la comunicación con el servidor.
             setError('Error de conexión');
             setSuccess('');
         }

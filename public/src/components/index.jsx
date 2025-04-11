@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import "../../css/styles.css";
+import React from 'react'; // Importación de React para construir componentes funcionales.
+import { Link, useNavigate } from 'react-router-dom'; // Importación de herramientas de navegación y enlaces para una SPA.
+import "../../css/styles.css"; // Importación de estilos CSS para aplicar diseño y formato visual.
 
 const Index = () => {
+    // Permite la navegación entre páginas.
     const navigate = useNavigate();
 
     return (

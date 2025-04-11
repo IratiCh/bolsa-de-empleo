@@ -5,11 +5,16 @@ import "../../../css/styles.css";
 
 function DashboardEmpresa() {
     const navigate = useNavigate();
+    // Estado local que almacena la lista de ofertas laborales.
     const [ofertas, setOfertas] = useState([]);
+    // Estado local para indicar si los datos aún se están cargando.
     const [loading, setLoading] = useState(true);
+    // Estado local para manejar mensajes de error.
     const [error, setError] = useState('');
 
+    // Comprueba si el usuario está autenticado. Si no, lo redirige al inicio de sesión.
     if (!localStorage.getItem('usuario')) {
+        // Si el usuario no pertenece al rol de empresa, lo redirige al inicio de sesión.
         navigate('/login', { replace: true });
       } else { 
         const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -19,40 +24,50 @@ function DashboardEmpresa() {
   
     }
 
+    // Función para cargar las ofertas abiertas desde el backend.
     useEffect(() => {
         const fetchOfertas = async () => {
             try {
+                // Comprueba la existencia de un usuario autenticado y que pertenece a una empresa.
                 const usuario = JSON.parse(localStorage.getItem('usuario'));
                 if (!usuario || !usuario.id_emp) {
                     navigate('/login', { replace: true });
                     return;
                 }
 
+                // Solicita las ofertas laborales abiertas del backend para la empresa específica.
                 const response = await fetch(`/api/ofertas/abiertas?id_emp=${usuario.id_emp}`);
 
+                // Si la solicitud falla, establece un mensaje de error.
                 if (!response.ok){ 
                     setError("Error al cargar las ofertas");
                 }
 
                 const data = await response.json();
+                // Actualiza el estado con la lista de ofertas obtenida.
                 setOfertas(data);
             } catch (error) {
+                // Captura errores de conexión o problemas en la solicitud al backend.
                 setError("Error al cargar ofertas:", error);
             } finally {
                 setLoading(false);
             }
         };
+        // Llama a la función para cargar las ofertas cuando el componente se monta.
         fetchOfertas();
     }, []);
 
+    // Función para cerrar una oferta laboral específica.
     const cerrarOferta = async (id) => {
         try {
-        const response = await fetch(`/api/ofertas/${id}/cerrar`, {
-            method: "PUT",
-            headers: {
-            "Content-Type": "application/json",
+            // Realiza una solicitud PUT para actualizar el estado de la oferta en el backend.
+            const response = await fetch(`/api/ofertas/${id}/cerrar`, {
+                method: "PUT",
+                headers: {
+                "Content-Type": "application/json",
             },
         });
+        // Muestra un mensaje de error si la solicitud falla.
         if (!response.ok){
             setError("Error al cerrar la oferta");
         }
@@ -68,10 +83,12 @@ function DashboardEmpresa() {
         }
     };
 
+    // Redirige al usuario al formulario para crear una nueva oferta laboral.
     const handleCrearOferta = () => {
         navigate('/empresa/crear_oferta');
     };
 
+    // Redirige al usuario al formulario para asignar la oferta a un candidato.
     const handleAsignarOferta = (id) => {
         navigate(`/empresa/asignar_oferta/${id}`);
     };
@@ -85,9 +102,10 @@ function DashboardEmpresa() {
         window.location.reload();
     };
 
+    // Función que retorna los botones según el estado de la oferta laboral.
     const renderBotonesOferta = (oferta) => {
         switch(oferta.abierta) {
-            case -1: // Oferta cerrada
+            case -1: // Oferta cerrada por otro motivos
                 return (
                     <>
                         <button className="btn-modificar" disabled>
@@ -98,7 +116,7 @@ function DashboardEmpresa() {
                         </button>
                     </>
                 );
-            case 0: // Oferta abierta (sin asignar)
+            case 0: // Oferta abierta
                 return (
                     <>
                         <button
@@ -115,7 +133,7 @@ function DashboardEmpresa() {
                         </button>
                     </>
                 );
-            case 1: // Oferta asignada
+            case 1: // Oferta asignada (cerrada)
                 return (
                     <>
                         <button className="btn-modificar" disabled>
