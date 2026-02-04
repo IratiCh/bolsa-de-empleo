@@ -13,8 +13,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            CentroSeeder::class,
             TiposContratoSeeder::class,
+            TituloSeeder::class,
+            CentroSeeder::class,
+            MainDataSeeder::class,
         ]);
     }
 }
