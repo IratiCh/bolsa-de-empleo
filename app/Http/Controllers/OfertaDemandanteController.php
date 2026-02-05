@@ -40,7 +40,7 @@ class OfertaDemandanteController extends Controller
             
         } catch (\Exception $e) {
             // Registrar el error en los logs con un mensaje personalizado.
-            \Log::error("Error en OfertaDemandanteController: " . $e->getMessage());
+            Log::error("Error en OfertaDemandanteController: " . $e->getMessage());
             // Devolver un mensaje de error genérico.
             return response()->json([
                 'success' => false,

@@ -83,7 +83,7 @@ class MainDataSeeder extends Seeder
             'id_rol' => $demandante2
         ]);
 
-        // 3. Crear una Oferta (id_tipo_cont 1 es 'Mañana')
+        // 3. Crear Ofertas (id_tipo_cont 1 es 'Mañana')
         $ofertaId = DB::table('oferta')->insertGetId([
             'nombre' => 'Programador Junior React',
             'breve_desc' => 'Busqueda de talento joven',
@@ -91,6 +91,7 @@ class MainDataSeeder extends Seeder
             'fecha_pub' => now(),
             'num_puesto' => 2,
             'horario' => '08:00 - 15:00',
+            'obs' => null,
             'abierta' => 0,
             'id_emp' => $empresa1,
             'id_tipo_cont' => 1
@@ -101,11 +102,40 @@ class MainDataSeeder extends Seeder
             'id_oferta' => $ofertaId
         ]);
 
+        // Añadir titulaciones requeridas a la oferta
+        DB::table('titulos_oferta')->insert([
+            'id_oferta' => $ofertaId,
+            'id_titulo' => 1
+        ]);
+
+        $ofertaId2 = DB::table('oferta')->insertGetId([
+            'nombre' => 'Técnico Soporte',
+            'breve_desc' => 'Soporte TI',
+            'desc' => 'Atención y soporte a usuarios.',
+            'fecha_pub' => now(),
+            'num_puesto' => 1,
+            'horario' => '09:00 - 14:00',
+            'obs' => null,
+            'abierta' => 0,
+            'id_emp' => $empresa1,
+            'id_tipo_cont' => 2
+        ]);
+
+        DB::table('ofertas_empresa')->insert([
+            'id_empresa' => $empresa1,
+            'id_oferta' => $ofertaId2
+        ]);
+
+        DB::table('titulos_oferta')->insert([
+            'id_oferta' => $ofertaId2,
+            'id_titulo' => 3
+        ]);
+
         // 4. Inscribir al demandante en la oferta
         DB::table('apuntados_oferta')->insert([
             'id_demandante' => $demandante1,
             'id_oferta' => $ofertaId,
-            'adjudicada' => 'Pendiente',
+            'adjudicada' => null,
             'fecha' => now()
         ]);
 

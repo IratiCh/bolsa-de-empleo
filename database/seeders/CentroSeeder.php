@@ -11,7 +11,7 @@ class CentroSeeder extends Seeder
     public function run(): void
     {
         DB::table('usuarios')->insert([
-            'email' => 'centro@email.com',
+            'email' => 'centro@mail.com',
             'contrasena_hash' => hash::make(value: 'centro123'),
             'rol' => 'centro',
             'id_rol' => 1,
