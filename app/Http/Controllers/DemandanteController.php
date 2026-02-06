@@ -10,7 +10,7 @@ use App\Models\TituloDemandante;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class DemandanteController extends Controller
 {
@@ -160,6 +160,109 @@ class DemandanteController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['error' => 'Error al agregar título'], 500);
+        }
+    }
+
+    public function guardarCvForm(Request $request, $idDemandante)
+    {
+        try {
+            $validated = $request->validate([
+                'cv_form' => 'required|array'
+            ]);
+
+            $demandante = Demandante::findOrFail($idDemandante);
+            $demandante->update([
+                'cv_form' => $validated['cv_form']
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'CV actualizado correctamente'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error("Error al guardar CV", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al guardar CV'
+            ], 500);
+        }
+    }
+
+    public function subirCvPdf(Request $request, $idDemandante)
+    {
+        try {
+            $validated = $request->validate([
+                'cv_pdf' => 'required|file|mimes:pdf|max:2048'
+            ]);
+
+            $demandante = Demandante::findOrFail($idDemandante);
+
+            if (!empty($demandante->cv_pdf_path)) {
+                Storage::disk('public')->delete($demandante->cv_pdf_path);
+            }
+
+            $path = $validated['cv_pdf']->store('cv', 'public');
+
+            $demandante->update([
+                'cv_pdf_path' => $path
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'CV PDF subido correctamente',
+                'cv_pdf_path' => $path,
+                'cv_pdf_url' => asset('storage/' . $path)
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error("Error al subir CV PDF", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al subir CV PDF'
+            ], 500);
+        }
+    }
+
+    public function getCv($idDemandante)
+    {
+        try {
+            $demandante = Demandante::findOrFail($idDemandante);
+            $cvPdfUrl = null;
+
+            if (!empty($demandante->cv_pdf_path)) {
+                $cvPdfUrl = asset('storage/' . $demandante->cv_pdf_path);
+            }
+
+            return response()->json([
+                'success' => true,
+                'cv_form' => $demandante->cv_form,
+                'cv_pdf_path' => $demandante->cv_pdf_path,
+                'cv_pdf_url' => $cvPdfUrl
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error al obtener CV", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar CV'
+            ], 500);
         }
     }
 }

@@ -118,10 +118,12 @@ function DetalleOferta() {
             
             if (!response.ok) {
                 setError(data.error || 'Error al inscribirse');
+                return;
             }
             
             // Actualiza el estado para indicar que el usuario está inscrito.
             setIsInscrito(true);
+            setError('');
             
         } catch (err) {
             setError(err.message);

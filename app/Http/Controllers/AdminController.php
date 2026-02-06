@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa; // Modelo para interactuar con la tabla "empresa" en la base de datos.
+use App\Models\NotificacionCentro; // Modelo para notificaciones del centro.
 use Illuminate\Http\Request; // Clase para manejar solicitudes HTTP.
 
 class AdminController extends Controller
@@ -77,6 +78,80 @@ class AdminController extends Controller
                 'success' => false,
                 'message' => 'Error al actualizar empresa',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener las notificaciones del centro (adjudicaciones, etc.).
+     **/
+    public function getNotificaciones()
+    {
+        try {
+            $notificaciones = NotificacionCentro::where('leida', 0)
+                ->orderBy('fecha', 'desc')
+                ->limit(100)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'notificaciones' => $notificaciones
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar notificaciones'
+            ], 500);
+        }
+    }
+
+    /**
+     * Marcar una notificación como leída.
+     **/
+    public function marcarNotificacionLeida($id)
+    {
+        try {
+            $notificacion = NotificacionCentro::find($id);
+
+            if (!$notificacion) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Notificación no encontrada'
+                ], 404);
+            }
+
+            $notificacion->update([
+                'leida' => 1
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificación marcada como leída'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al actualizar notificación'
+            ], 500);
+        }
+    }
+
+    /**
+     * Marcar todas las notificaciones como leídas.
+     **/
+    public function marcarTodasNotificacionesLeidas()
+    {
+        try {
+            NotificacionCentro::where('leida', 0)->update(['leida' => 1]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificaciones marcadas como leídas'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al actualizar notificaciones'
             ], 500);
         }
     }

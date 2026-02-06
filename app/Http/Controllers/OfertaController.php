@@ -6,6 +6,7 @@ use App\Models\Oferta; // Modelo para interactuar con la tabla "oferta".
 use App\Models\TipoContrato; // Modelo para interactuar con la tabla "tipos_contrato".
 use App\Models\Titulo; // Modelo para interactuar con la tabla "titulos".
 use App\Models\Demandante; // Modelo para interactuar con la tabla "demandante".
+use App\Models\Empresa; // Modelo para interactuar con la tabla "empresa".
 use Illuminate\Http\Request; // Clase para manejar solicitudes HTTP.
 use Illuminate\Support\Facades\Validator; // Facade para validar datos de entrada.
 use Illuminate\Support\Facades\DB; // Facade para realizar consultas directas en la base de datos.
@@ -154,6 +155,21 @@ class OfertaController extends Controller
         }
 
         try {
+            $empresa = Empresa::find($request->id_emp);
+            if (!$empresa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Empresa no encontrada'
+                ], 404);
+            }
+
+            if ((int) $empresa->validado !== 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La empresa no está validada para publicar ofertas'
+                ], 403);
+            }
+
             DB::transaction(function () use ($request, &$ofertaId) {
                 // Crear la oferta en la base de datos.
                 $oferta = Oferta::create([
@@ -263,6 +279,68 @@ class OfertaController extends Controller
             return response()->json([
                 'error' => 'Error al cargar ofertas',
                 'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Histórico de ofertas cerradas de una empresa.
+     **/
+    public function getHistoricoEmpresa(Request $request)
+    {
+        try {
+            $idEmpresa = $request->input('id_emp');
+
+            if (!$idEmpresa) {
+                return response()->json(['error' => 'ID de empresa no proporcionado'], 400);
+            }
+
+            $ofertas = Oferta::where('id_emp', $idEmpresa)
+                ->where('abierta', 1)
+                ->orderBy('fecha_cierre', 'desc')
+                ->get(['id', 'nombre', 'breve_desc', 'fecha_pub', 'fecha_cierre', 'abierta']);
+
+            return response()->json([
+                'success' => true,
+                'ofertas' => $ofertas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar histórico de ofertas'
+            ], 500);
+        }
+    }
+
+    /**
+     * Histórico de ofertas cerradas del centro.
+     **/
+    public function getHistoricoCentro()
+    {
+        try {
+            $ofertas = Oferta::with(['empresa'])
+                ->where('abierta', 1)
+                ->orderBy('fecha_cierre', 'desc')
+                ->get()
+                ->map(function ($oferta) {
+                    return [
+                        'id' => $oferta->id,
+                        'nombre' => $oferta->nombre,
+                        'breve_desc' => $oferta->breve_desc,
+                        'fecha_pub' => $oferta->fecha_pub,
+                        'fecha_cierre' => $oferta->fecha_cierre,
+                        'empresa' => $oferta->empresa ? $oferta->empresa->nombre : null
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'ofertas' => $ofertas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar histórico del centro'
             ], 500);
         }
     }

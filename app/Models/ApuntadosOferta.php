@@ -19,7 +19,8 @@ class ApuntadosOferta extends Model
     protected $fillable = [
         'id_demandante', // ID del demandante inscrito en la oferta.
         'id_oferta', // ID de la oferta a la que está inscrito.
-        'adjudicada', // Estado de adjudicación (por ejemplo: 1 para adjudicado, null para no adjudicado).
+        'adjudicada', // Campo legacy (string).
+        'adjudicada_estado', // 0 = no adjudicada, 1 = adjudicada.
         'fecha' // Fecha en la que el demandante se inscribió en la oferta.
     ];
 
@@ -46,8 +47,8 @@ class ApuntadosOferta extends Model
      **/
     public function scopeAdjudicadas($query)
     {
-        // Filtra las inscripciones que tienen adjudicada = 1.
-        return $query->where('adjudicada', 1);
+        // Filtra las inscripciones que tienen adjudicada_estado = 1.
+        return $query->where('adjudicada_estado', 1);
     }
 
     /**

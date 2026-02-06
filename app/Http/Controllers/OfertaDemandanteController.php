@@ -128,6 +128,28 @@ class OfertaDemandanteController extends Controller
                 ], 400);
             }
 
+            // Verificar que el demandante tenga al menos una titulación requerida por la oferta.
+            $titulosOferta = DB::table('titulos_oferta')
+                ->where('id_oferta', $idOferta)
+                ->pluck('id_titulo')
+                ->toArray();
+
+            if (!empty($titulosOferta)) {
+                $titulosDemandante = DB::table('titulos_demandante')
+                    ->where('id_dem', $validated['id_demandante'])
+                    ->pluck('id_titulo')
+                    ->toArray();
+
+                $coinciden = !empty(array_intersect($titulosOferta, $titulosDemandante));
+
+                if (!$coinciden) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'No cumples los requisitos de titulación para esta oferta'
+                    ], 403);
+                }
+            }
+
             // Crear una nueva inscripción en la oferta.
             ApuntadosOferta::create([
                 'id_oferta' => $idOferta,

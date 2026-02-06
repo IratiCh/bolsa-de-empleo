@@ -136,6 +136,7 @@ class MainDataSeeder extends Seeder
             'id_demandante' => $demandante1,
             'id_oferta' => $ofertaId,
             'adjudicada' => null,
+            'adjudicada_estado' => 0,
             'fecha' => now()
         ]);
 
@@ -150,7 +151,7 @@ class MainDataSeeder extends Seeder
 
         DB::table('titulos_demandante')->insert([
             'id_dem' => $demandante2,
-            'id_titulo' => 5,
+            'id_titulo' => 3,
             'centro' => 'CIP Tafalla',
             'año' => '2020-05-20',
             'cursando' => 'Finalizado'

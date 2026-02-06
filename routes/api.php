@@ -25,6 +25,10 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'centro'], function () {
     Route::get('/empresas-pendientes', [AdminController::class, 'getEmpresasPendientes']);
     Route::put('/validar-empresa/{id}', [AdminController::class, 'validarEmpresa']);
+    Route::get('/notificaciones', [AdminController::class, 'getNotificaciones']);
+    Route::put('/notificaciones/{id}/leida', [AdminController::class, 'marcarNotificacionLeida']);
+    Route::put('/notificaciones/leidas', [AdminController::class, 'marcarTodasNotificacionesLeidas']);
+    Route::get('/historico-ofertas', [OfertaController::class, 'getHistoricoCentro']);
     Route::get('/titulos', [TituloController::class, 'gestionTitulos']);
     Route::delete('/titulos/{id}', [TituloController::class, 'eliminar']);
     Route::post('/titulos', [TituloController::class, 'crear']);
@@ -37,6 +41,8 @@ Route::group(['prefix' => 'centro'], function () {
 Route::group(['prefix' => 'empresa'], function() {
     Route::get('/asignar_oferta/{id}', [EmpresaController::class, 'getDemandantes']);
     Route::post('/asignar_oferta/{id}/asignar', [EmpresaController::class, 'asignarDemandante']);
+    Route::get('/historico-ofertas', [OfertaController::class, 'getHistoricoEmpresa']);
+    Route::get('/ofertas/{id}/solicitudes', [EmpresaController::class, 'getSolicitudesOferta']);
 });
 
 /* DEMANDANTE */
@@ -62,6 +68,9 @@ Route::group(['prefix' => 'demandante'], function () {
     Route::get('/perfil/{id}', [DemandanteController::class, 'getPerfil']);
     Route::put('/actualizar-datos/{id}', [DemandanteController::class, 'actualizarPerfil']);
     Route::post('/guardar-titulos/{id}', [DemandanteController::class, 'guardarTitulo']);
+    Route::get('/cv/{id}', [DemandanteController::class, 'getCv']);
+    Route::put('/cv-form/{id}', [DemandanteController::class, 'guardarCvForm']);
+    Route::post('/cv-pdf/{id}', [DemandanteController::class, 'subirCvPdf']);
 
     Route::get('/ofertas-inscritas', [OfertaDemandanteController::class, 'ofertasInscritas']);
     Route::delete('/ofertas/{id}/cancelar-inscripcion', [OfertaDemandanteController::class, 'cancelarInscripcion']);
