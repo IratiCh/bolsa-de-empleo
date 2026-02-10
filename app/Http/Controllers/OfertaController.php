@@ -295,10 +295,37 @@ class OfertaController extends Controller
                 return response()->json(['error' => 'ID de empresa no proporcionado'], 400);
             }
 
-            $ofertas = Oferta::where('id_emp', $idEmpresa)
-                ->where('abierta', 1)
-                ->orderBy('fecha_cierre', 'desc')
-                ->get(['id', 'nombre', 'breve_desc', 'fecha_pub', 'fecha_cierre', 'abierta']);
+            $latestNotificaciones = DB::table('notificaciones_centro')
+                ->select('id_oferta', DB::raw('MAX(id) as id'))
+                ->where('tipo', 'adjudicacion')
+                ->groupBy('id_oferta');
+
+            $ofertas = Oferta::where('oferta.id_emp', $idEmpresa)
+                ->where('oferta.abierta', 1)
+                ->leftJoinSub($latestNotificaciones, 'nc_max', function ($join) {
+                    $join->on('oferta.id', '=', 'nc_max.id_oferta');
+                })
+                ->leftJoin('notificaciones_centro as nc', 'nc.id', '=', 'nc_max.id')
+                ->leftJoin('demandante as d', 'd.id', '=', 'nc.id_demandante')
+                ->orderBy('oferta.fecha_cierre', 'desc')
+                ->get([
+                    'oferta.id',
+                    'oferta.nombre',
+                    'oferta.breve_desc',
+                    'oferta.fecha_pub',
+                    'oferta.fecha_cierre',
+                    'oferta.abierta',
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN nc.externo_nombre
+                        WHEN d.id IS NOT NULL THEN CONCAT(d.nombre, ' ', d.ape1, ' ', d.ape2)
+                        ELSE NULL
+                    END as candidato_nombre"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN 'externo'
+                        WHEN d.id IS NOT NULL THEN 'interno'
+                        ELSE NULL
+                    END as candidato_tipo"),
+                ]);
 
             return response()->json([
                 'success' => true,
@@ -318,20 +345,37 @@ class OfertaController extends Controller
     public function getHistoricoCentro()
     {
         try {
-            $ofertas = Oferta::with(['empresa'])
-                ->where('abierta', 1)
-                ->orderBy('fecha_cierre', 'desc')
-                ->get()
-                ->map(function ($oferta) {
-                    return [
-                        'id' => $oferta->id,
-                        'nombre' => $oferta->nombre,
-                        'breve_desc' => $oferta->breve_desc,
-                        'fecha_pub' => $oferta->fecha_pub,
-                        'fecha_cierre' => $oferta->fecha_cierre,
-                        'empresa' => $oferta->empresa ? $oferta->empresa->nombre : null
-                    ];
-                });
+            $latestNotificaciones = DB::table('notificaciones_centro')
+                ->select('id_oferta', DB::raw('MAX(id) as id'))
+                ->where('tipo', 'adjudicacion')
+                ->groupBy('id_oferta');
+
+            $ofertas = Oferta::where('oferta.abierta', 1)
+                ->leftJoin('empresa as e', 'e.id', '=', 'oferta.id_emp')
+                ->leftJoinSub($latestNotificaciones, 'nc_max', function ($join) {
+                    $join->on('oferta.id', '=', 'nc_max.id_oferta');
+                })
+                ->leftJoin('notificaciones_centro as nc', 'nc.id', '=', 'nc_max.id')
+                ->leftJoin('demandante as d', 'd.id', '=', 'nc.id_demandante')
+                ->orderBy('oferta.fecha_cierre', 'desc')
+                ->get([
+                    'oferta.id',
+                    'oferta.nombre',
+                    'oferta.breve_desc',
+                    'oferta.fecha_pub',
+                    'oferta.fecha_cierre',
+                    DB::raw("e.nombre as empresa"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN nc.externo_nombre
+                        WHEN d.id IS NOT NULL THEN CONCAT(d.nombre, ' ', d.ape1, ' ', d.ape2)
+                        ELSE NULL
+                    END as candidato_nombre"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN 'externo'
+                        WHEN d.id IS NOT NULL THEN 'interno'
+                        ELSE NULL
+                    END as candidato_tipo"),
+                ]);
 
             return response()->json([
                 'success' => true,

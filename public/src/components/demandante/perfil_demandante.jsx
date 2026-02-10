@@ -538,18 +538,18 @@ function PerfilDemandante() {
                         <tbody>
                             
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h1>Mis Títulos</h1>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h2>Primer Título</h2>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="nombre">Nombre</label>
+                                    <label htmlFor="nombre">Nombre</label>
                                     <select
                                         value={titulos[0].titulo_id}
                                         onChange={(e) => handleTituloChange(0, 'titulo_id', e.target.value)}
@@ -598,13 +598,13 @@ function PerfilDemandante() {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h2>Segundo Título</h2>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="nombre">Nombre</label>
+                                    <label htmlFor="nombre">Nombre</label>
                                     <select
                                         value={titulos[1].titulo_id}
                                         onChange={(e) => handleTituloChange(1, 'titulo_id', e.target.value)}

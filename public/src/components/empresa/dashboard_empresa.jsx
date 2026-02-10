@@ -184,6 +184,14 @@ function DashboardEmpresa() {
         }
     };
 
+    const formatCandidato = (oferta) => {
+        if (!oferta?.candidato_nombre) return 'Sin candidato';
+        if (oferta.candidato_tipo === 'externo') {
+            return `${oferta.candidato_nombre} (Externo)`;
+        }
+        return oferta.candidato_nombre;
+    };
+
   return (
     <div className="OFERTAS-DEL-CENTRO">
       <header className="HEADER">
@@ -214,9 +222,17 @@ function DashboardEmpresa() {
                 </th>
               </tr>
             </thead>
-            {loading && <div>Cargando empresas...</div>}
-            {error && <div className="error">{error}</div>}
             <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan="3">Cargando ofertas...</td>
+                </tr>
+              )}
+              {error && (
+                <tr>
+                  <td colSpan="3" className="error">{error}</td>
+                </tr>
+              )}
               {ofertas.map((oferta) => (
                 <tr key={oferta.id}>
                   <td>{oferta.nombre}</td>
@@ -234,18 +250,27 @@ function DashboardEmpresa() {
           <table>
             <thead>
               <tr>
-                <th colSpan="3">
+                <th colSpan="4">
                   <h1>Histórico de Ofertas</h1>
                 </th>
               </tr>
             </thead>
-            {loadingHistorico && <div>Cargando histórico...</div>}
-            {errorHistorico && <div className="error">{errorHistorico}</div>}
             <tbody>
+              {loadingHistorico && (
+                <tr>
+                  <td colSpan="4">Cargando histórico...</td>
+                </tr>
+              )}
+              {errorHistorico && (
+                <tr>
+                  <td colSpan="4" className="error">{errorHistorico}</td>
+                </tr>
+              )}
               {historico.map((oferta) => (
                 <tr key={`hist-${oferta.id}`}>
                   <td>{oferta.nombre}</td>
                   <td>{formatDate(oferta.fecha_cierre)}</td>
+                  <td>{formatCandidato(oferta)}</td>
                   <td>
                     <button className="btn-modificar" onClick={() => handleAsignarOferta(oferta.id)}>
                       SOLICITUDES
@@ -255,7 +280,7 @@ function DashboardEmpresa() {
               ))}
               {historico.length === 0 && !loadingHistorico && (
                 <tr>
-                  <td colSpan="3" style={{ textAlign: 'center' }}>No hay histórico</td>
+                  <td colSpan="4" style={{ textAlign: 'center' }}>No hay histórico</td>
                 </tr>
               )}
             </tbody>

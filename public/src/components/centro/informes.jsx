@@ -88,6 +88,14 @@ const Informes = () => {
         }
     };
 
+    const formatCandidato = (oferta) => {
+        if (!oferta?.candidato_nombre) return 'Sin candidato';
+        if (oferta.candidato_tipo === 'externo') {
+            return `${oferta.candidato_nombre} (Externo)`;
+        }
+        return oferta.candidato_nombre;
+    };
+
     const handleLogout = () => {
         // Limpiar el almacenamiento local
         localStorage.removeItem('usuario');
@@ -162,7 +170,7 @@ const Informes = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th colSpan="3"><h1>Histórico de ofertas</h1></th>
+                                <th colSpan="4"><h1>Histórico de ofertas</h1></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -172,12 +180,13 @@ const Informes = () => {
                                         <td>{oferta.nombre}</td>
                                         <td>{oferta.empresa || 'Empresa'}</td>
                                         <td>{formatDate(oferta.fecha_cierre)}</td>
+                                        <td>{formatCandidato(oferta)}</td>
                                     </tr>
                                 ))
                             ) : (
                                 !loading && (
                                     <tr>
-                                        <td colSpan="3" style={{textAlign: 'center'}}>No hay histórico</td>
+                                        <td colSpan="4" style={{textAlign: 'center'}}>No hay histórico</td>
                                     </tr>
                                 )
                             )}

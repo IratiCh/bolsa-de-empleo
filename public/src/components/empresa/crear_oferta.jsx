@@ -190,18 +190,18 @@ function CrearOferta() {
               <table className="table-ofert">
                 <tbody>
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Nombre</label>
                       <input type="text" id="nombre" name="nombre" required placeholder="Nombre" value={formData.nombre} onChange={handleChange}/>
                     </td>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Tipo de Contrato</label>
                       <select name="id_tipo_cont"
                           required
                           value={formData.id_tipo_cont}
                           onChange={handleChange}
                       >
-                        <option value="" selected disabled>Tipo de Contrato</option>
+                        <option value="" disabled>Tipo de Contrato</option>
                         {tiposContrato.map(tipo => (
                           <option key={tipo.id} value={tipo.id}>
                               {tipo.nombre}
@@ -211,7 +211,7 @@ function CrearOferta() {
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="breve_desc">Breve descripción</label>
                       <input type="text" id="breve_desc" name="breve_desc" required placeholder="Breve descripción" value={formData.breve_desc} onChange={handleChange}/>
                     </td>
@@ -225,14 +225,14 @@ function CrearOferta() {
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Título Necesario</label>
                       <select name="titulo_principal" 
                           required 
                           value={formData.titulos[0] || ''} 
                           onChange={(e) => handleSelectTitulo(e, 0)} 
                       >
-                        <option value="" selected disabled>Título Necesario</option>
+                        <option value="" disabled>Título Necesario</option>
                         {titulos.map(titulo => (
                           <option key={titulo.id} value={titulo.id}>
                               {titulo.nombre}
@@ -240,13 +240,13 @@ function CrearOferta() {
                         ))}
                       </select>
                     </td>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Otro Título Necesario</label>
                       <select name="titulo_secundario" 
                           value={formData.titulos[1] || ''}
                           onChange={(e) => handleSelectTitulo(e, 1)}
                       >
-                        <option value="" selected disabled>Otro Título Necesario</option>
+                        <option value="" disabled>Otro Título Necesario</option>
                         {titulos.map(titulo => (
                           <option key={titulo.id} value={titulo.id}>
                               {titulo.nombre}
@@ -256,11 +256,11 @@ function CrearOferta() {
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Descripción</label>
                       <textarea name="desc" required rows="10" cols="50" placeholder="Descripción" value={formData.desc} onChange={handleChange}></textarea>
                     </td>
-                    <td colspan="2">
+                    <td colSpan="2">
                       <label htmlFor="text">Observaciones</label>
                       <textarea name="obs" required rows="10" cols="50" placeholder="Observaciones" value={formData.obs} onChange={handleChange}></textarea>
                     </td>
