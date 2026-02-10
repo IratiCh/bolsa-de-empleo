@@ -730,3 +730,35 @@ body {
     color: var(--color-black);
     padding: 5rem 0 5rem 0;
 }
+
+/* Tipografía uniforme en formularios */
+input,
+select,
+textarea,
+button {
+    font-family: var(--font-secondary);
+}
+
+input::placeholder,
+textarea::placeholder {
+    font-family: var(--font-secondary);
+    color: var(--color-gray);
+    opacity: 1;
+}
+
+label {
+    font-family: var(--font-secondary);
+    font-size: 0.95rem;
+    color: var(--color-gray);
+}
+
+input,
+select,
+textarea {
+    font-size: 0.95rem;
+}
+
+button {
+    font-size: 0.95rem;
+    font-weight: 600;
+}

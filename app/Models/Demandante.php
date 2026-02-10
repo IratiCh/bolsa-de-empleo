@@ -11,7 +11,12 @@ class Demandante extends Model
 
     // Define los campos que se pueden asignar de forma masiva.
     protected $fillable = [
-        'dni', 'nombre', 'ape1', 'ape2', 'tel_movil', 'email', 'situacion'
+        'dni', 'nombre', 'ape1', 'ape2', 'tel_movil', 'email', 'situacion',
+        'cv_form', 'cv_pdf_path'
+    ];
+
+    protected $casts = [
+        'cv_form' => 'array',
     ];
 
     /**
@@ -45,10 +50,10 @@ class Demandante extends Model
         // Define la relación con el modelo "Oferta".
         // Usa la tabla pivot "apuntados_oferta" para conectar demandantes y ofertas.
         // Aplica el modelo "ApuntadosOferta" para manejar esta relación.
-        // Incluye columnas adicionales en la tabla pivot: "adjudicada" y "fecha".
+        // Incluye columnas adicionales en la tabla pivot: "adjudicada_estado" y "fecha".
         return $this->belongsToMany(Oferta::class, 'apuntados_oferta', 'id_demandante', 'id_oferta')
                     ->using(ApuntadosOferta::class)
-                    ->withPivot(['adjudicada', 'fecha']);
+                    ->withPivot(['adjudicada_estado', 'fecha']);
     }
 
     public $timestamps = false;

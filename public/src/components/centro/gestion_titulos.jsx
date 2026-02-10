@@ -126,9 +126,17 @@ const GestionTitulos = () => {
                                 </th>
                             </tr>
                         </thead>
-                        {loading && <div>Cargando empresas...</div>}
-                        {error && <div className="error">{error}</div>}
                         <tbody>
+                            {loading && (
+                                <tr>
+                                    <td colSpan="2">Cargando títulos...</td>
+                                </tr>
+                            )}
+                            {error && (
+                                <tr>
+                                    <td colSpan="2" className="error">{error}</td>
+                                </tr>
+                            )}
                             {titulos.map(titulo => (
                                  <tr key={titulo.id}>
                                     <td>{titulo.nombre}</td>

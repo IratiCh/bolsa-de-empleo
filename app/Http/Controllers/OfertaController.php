@@ -6,9 +6,11 @@ use App\Models\Oferta; // Modelo para interactuar con la tabla "oferta".
 use App\Models\TipoContrato; // Modelo para interactuar con la tabla "tipos_contrato".
 use App\Models\Titulo; // Modelo para interactuar con la tabla "titulos".
 use App\Models\Demandante; // Modelo para interactuar con la tabla "demandante".
+use App\Models\Empresa; // Modelo para interactuar con la tabla "empresa".
 use Illuminate\Http\Request; // Clase para manejar solicitudes HTTP.
 use Illuminate\Support\Facades\Validator; // Facade para validar datos de entrada.
 use Illuminate\Support\Facades\DB; // Facade para realizar consultas directas en la base de datos.
+use Illuminate\Support\Facades\Log;
 
 class OfertaController extends Controller
 {
@@ -28,6 +30,7 @@ class OfertaController extends Controller
 
             // Consultar las ofertas relacionadas con la empresa que estén abiertas.
             $ofertas = Oferta::where('id_emp', $idEmpresa)
+                ->where('abierta', 0) // Solo ofertas abiertas (abierta = 0).
                 ->get(['id', 'nombre', 'breve_desc', 'abierta']); // Selección específica de columnas.
             return response()->json($ofertas); // Devolver las ofertas encontradas en formato JSON.
         } catch (\Exception $e) {
@@ -35,7 +38,7 @@ class OfertaController extends Controller
             return response()->json(['error' => 'Error al cargar ofertas', 'details' => $e->getMessage()], 500);
         }
     }
-    
+
     /**
      * Cerrar una oferta específica.
      **/
@@ -51,7 +54,7 @@ class OfertaController extends Controller
             }
 
             // Marcar la oferta como cerrada y registrar la fecha de cierre.
-            $oferta->abierta = -1; // Marcamos la oferta como cerrada con -1
+            $oferta->abierta = 1; // Marcamos la oferta como cerrada con -1
             $oferta->fecha_cierre = now(); // Registrar la fecha de cierre
             $oferta->save();
 
@@ -112,7 +115,7 @@ class OfertaController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Crear una nueva oferta.
      **/
@@ -126,6 +129,7 @@ class OfertaController extends Controller
             'num_puesto' => 'required|integer|min:1', // Número de puestos, debe ser al menos 1.
             'horario' => 'required|string|max:45', // Horario laboral, máximo 45 caracteres.
             'obs' => 'nullable|string|max:500', // Observaciones opcionales, máximo 500 caracteres.
+            'id_emp' => 'required|exists:empresa,id', // Empresa válida debe existir en la base de datos.
             'id_tipo_cont' => 'required|exists:tipos_contrato,id', // ID de tipo de contrato debe existir en la base de datos.
             'titulos' => 'required|array', // Títulos requeridos para la oferta.
             'titulos.*' => 'required|exists:titulos,id' // Cada título debe existir en la base de datos.
@@ -151,40 +155,57 @@ class OfertaController extends Controller
         }
 
         try {
-            // Crear la oferta en la base de datos.
-            $oferta = Oferta::create([
-                'nombre' => $request->nombre,
-                'breve_desc' => $request->breve_desc,
-                'desc' => $request->desc,
-                'fecha_pub' => now(),
-                'num_puesto' => $request->num_puesto,
-                'horario' => $request->horario,
-                'obs' => $request->obs,
-                'abierta' => 0, // Oferta abierta por defecto
-                'id_emp' => $request->id_emp,
-                'id_tipo_cont' => $request->id_tipo_cont
-            ]);
-
-            // Relacionar la oferta con la empresa en la tabla pivot.
-            DB::table('ofertas_empresa')->insert([
-                'id_empresa' => $request->id_emp,
-                'id_oferta' => $oferta->id
-            ]);
-
-            // Relacionar la oferta con los títulos requeridos en la tabla pivot.
-            foreach ($request->titulos as $idTitulo) {
-                DB::table('titulos_oferta')->insert([
-                    'id_oferta' => $oferta->id,
-                    'id_titulo' => $idTitulo
-                ]);
+            $empresa = Empresa::find($request->id_emp);
+            if (!$empresa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Empresa no encontrada'
+                ], 404);
             }
+
+            if ((int) $empresa->validado !== 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La empresa no está validada para publicar ofertas'
+                ], 403);
+            }
+
+            DB::transaction(function () use ($request, &$ofertaId) {
+                // Crear la oferta en la base de datos.
+                $oferta = Oferta::create([
+                    'nombre' => $request->nombre,
+                    'breve_desc' => $request->breve_desc,
+                    'desc' => $request->desc,
+                    'fecha_pub' => now(),
+                    'num_puesto' => $request->num_puesto,
+                    'horario' => $request->horario,
+                    'obs' => $request->obs,
+                    'abierta' => 0, // Oferta abierta por defecto
+                    'id_emp' => $request->id_emp,
+                    'id_tipo_cont' => $request->id_tipo_cont
+                ]);
+
+                // Relacionar la oferta con los títulos requeridos en la tabla pivot.
+                foreach ($request->titulos as $idTitulo) {
+                    DB::table('titulos_oferta')->insert([
+                        'id_oferta' => $oferta->id,
+                        'id_titulo' => $idTitulo
+                    ]);
+                }
+
+                // Relacionar la oferta con la empresa en la tabla pivot.
+                DB::table('ofertas_empresa')->insert([
+                    'id_empresa' => $request->id_emp,
+                    'id_oferta' => $oferta->id
+                ]);
+
+            });
 
             // Devolver un mensaje de éxito.
             return response()->json([
                 'success' => true,
                 'message' => 'Oferta creada correctamente'
             ]);
-
         } catch (\Exception $e) {
             // Manejo de errores.
             return response()->json([
@@ -203,12 +224,12 @@ class OfertaController extends Controller
         try {
             // ID del demandante desde la solicitud.
             $idDemandante = $request->input('id_dem');
-            
+
             // Obtener los títulos del demandante desde la tabla pivot.
             $titulosDemandante = DB::table('titulos_demandante')
-                                ->where('id_dem', $idDemandante)
-                                ->pluck('id_titulo')
-                                ->toArray();
+                ->where('id_dem', $idDemandante)
+                ->pluck('id_titulo')
+                ->toArray();
 
             // Consulta consulta base para ofertas abiertas
             $query = Oferta::where('abierta', 0)
@@ -219,14 +240,14 @@ class OfertaController extends Controller
 
             // Si el demandante tiene títulos, filtrar ofertas que coincidan con ellos.
             if (!empty($titulosDemandante)) {
-                $query->whereHas('titulos', function($q) use ($titulosDemandante) {
+                $query->whereHas('titulos', function ($q) use ($titulosDemandante) {
                     $q->whereIn('titulos.id', $titulosDemandante);
                 });
             }
 
             // Obtener y mapear los resultados
             $ofertas = $query->get()
-                ->map(function($oferta) {
+                ->map(function ($oferta) {
                     // Transformar cada oferta en un formato personalizado para la respuesta JSON.
                     return [
                         'id' => $oferta->id, // ID único de la oferta.
@@ -240,7 +261,7 @@ class OfertaController extends Controller
 
             // Registrar información en los logs sobre las ofertas encontradas.
             // Esto es útil para depuración y para saber cuántas ofertas se cargaron correctamente.
-            \Log::info("Ofertas encontradas:", [
+            Log::info("Ofertas encontradas:", [
                 'count' => count($ofertas),
                 'con_filtro_titulos' => !empty($titulosDemandante),
                 'titulos_demandante' => $titulosDemandante
@@ -248,10 +269,9 @@ class OfertaController extends Controller
 
             // Devolver las ofertas en formato JSON como respuesta al cliente.
             return response()->json($ofertas);
-
         } catch (\Exception $e) {
             // Registrar el error en los logs para depuración, incluyendo el mensaje de error y el stack trace.
-            \Log::error("Error en getOfertasDemandante", [
+            Log::error("Error en getOfertasDemandante", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -261,6 +281,111 @@ class OfertaController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
-    } 
+    }
 
+    /**
+     * Histórico de ofertas cerradas de una empresa.
+     **/
+    public function getHistoricoEmpresa(Request $request)
+    {
+        try {
+            $idEmpresa = $request->input('id_emp');
+
+            if (!$idEmpresa) {
+                return response()->json(['error' => 'ID de empresa no proporcionado'], 400);
+            }
+
+            $latestNotificaciones = DB::table('notificaciones_centro')
+                ->select('id_oferta', DB::raw('MAX(id) as id'))
+                ->where('tipo', 'adjudicacion')
+                ->groupBy('id_oferta');
+
+            $ofertas = Oferta::where('oferta.id_emp', $idEmpresa)
+                ->where('oferta.abierta', 1)
+                ->leftJoinSub($latestNotificaciones, 'nc_max', function ($join) {
+                    $join->on('oferta.id', '=', 'nc_max.id_oferta');
+                })
+                ->leftJoin('notificaciones_centro as nc', 'nc.id', '=', 'nc_max.id')
+                ->leftJoin('demandante as d', 'd.id', '=', 'nc.id_demandante')
+                ->orderBy('oferta.fecha_cierre', 'desc')
+                ->get([
+                    'oferta.id',
+                    'oferta.nombre',
+                    'oferta.breve_desc',
+                    'oferta.fecha_pub',
+                    'oferta.fecha_cierre',
+                    'oferta.abierta',
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN nc.externo_nombre
+                        WHEN d.id IS NOT NULL THEN CONCAT(d.nombre, ' ', d.ape1, ' ', d.ape2)
+                        ELSE NULL
+                    END as candidato_nombre"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN 'externo'
+                        WHEN d.id IS NOT NULL THEN 'interno'
+                        ELSE NULL
+                    END as candidato_tipo"),
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'ofertas' => $ofertas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar histórico de ofertas'
+            ], 500);
+        }
+    }
+
+    /**
+     * Histórico de ofertas cerradas del centro.
+     **/
+    public function getHistoricoCentro()
+    {
+        try {
+            $latestNotificaciones = DB::table('notificaciones_centro')
+                ->select('id_oferta', DB::raw('MAX(id) as id'))
+                ->where('tipo', 'adjudicacion')
+                ->groupBy('id_oferta');
+
+            $ofertas = Oferta::where('oferta.abierta', 1)
+                ->leftJoin('empresa as e', 'e.id', '=', 'oferta.id_emp')
+                ->leftJoinSub($latestNotificaciones, 'nc_max', function ($join) {
+                    $join->on('oferta.id', '=', 'nc_max.id_oferta');
+                })
+                ->leftJoin('notificaciones_centro as nc', 'nc.id', '=', 'nc_max.id')
+                ->leftJoin('demandante as d', 'd.id', '=', 'nc.id_demandante')
+                ->orderBy('oferta.fecha_cierre', 'desc')
+                ->get([
+                    'oferta.id',
+                    'oferta.nombre',
+                    'oferta.breve_desc',
+                    'oferta.fecha_pub',
+                    'oferta.fecha_cierre',
+                    DB::raw("e.nombre as empresa"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN nc.externo_nombre
+                        WHEN d.id IS NOT NULL THEN CONCAT(d.nombre, ' ', d.ape1, ' ', d.ape2)
+                        ELSE NULL
+                    END as candidato_nombre"),
+                    DB::raw("CASE 
+                        WHEN nc.externo_nombre IS NOT NULL AND nc.externo_nombre <> '' THEN 'externo'
+                        WHEN d.id IS NOT NULL THEN 'interno'
+                        ELSE NULL
+                    END as candidato_tipo"),
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'ofertas' => $ofertas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar histórico del centro'
+            ], 500);
+        }
+    }
 }

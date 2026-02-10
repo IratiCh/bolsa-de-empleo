@@ -27,6 +27,8 @@ function PerfilDemandante() {
     const [allTitulos, setAllTitulos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [cvError, setCvError] = useState('');
+    const [cvSuccess, setCvSuccess] = useState('');
     const [fieldErrors, setFieldErrors] = useState({
         nombre: '',
         ape1: '',
@@ -36,6 +38,14 @@ function PerfilDemandante() {
         titulos: []
     });
     const [success, setSuccess] = useState('');
+    const [cvForm, setCvForm] = useState({
+        resumen: '',
+        experiencia: '',
+        formacion: '',
+        habilidades: ''
+    });
+    const [cvPdfUrl, setCvPdfUrl] = useState('');
+    const [cvFile, setCvFile] = useState(null);
 
     // Verificar autenticación
     useEffect(() => {
@@ -89,7 +99,6 @@ function PerfilDemandante() {
                     setAllTitulos(data.allTitulos || []);
                 } else {
                     setError(data.error || 'Error al cargar perfil');
-                    setErrorMessage(data.message || 'Error al cargar perfil');
                 }
             } catch (err) {
                 setError('Error de conexión');
@@ -101,6 +110,41 @@ function PerfilDemandante() {
         cargarPerfil();
     }, [navigate]);
 
+    useEffect(() => {
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (!usuario?.id_dem) return;
+
+        const cargarCv = async () => {
+            try {
+                const response = await fetch(`/api/demandante/cv/${usuario.id_dem}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setCvError(data.error || 'Error al cargar CV');
+                    return;
+                }
+
+                setCvForm({
+                    resumen: data.cv_form?.resumen || '',
+                    experiencia: data.cv_form?.experiencia || '',
+                    formacion: data.cv_form?.formacion || '',
+                    habilidades: data.cv_form?.habilidades || ''
+                });
+
+                setCvPdfUrl(data.cv_pdf_url || '');
+            } catch (err) {
+                setCvError('Error de conexión');
+            }
+        };
+
+        cargarCv();
+    }, []);
+
     const handleDatosChange = (e) => {
         const { name, value } = e.target;
         setDemandanteEdicion(prev => ({ ...prev, [name]: value }));
@@ -110,6 +154,78 @@ function PerfilDemandante() {
         const nuevosTitulos = [...titulos];
         nuevosTitulos[index] = { ...nuevosTitulos[index], [field]: value };
         setTitulos(nuevosTitulos);
+    };
+
+    const handleCvFormChange = (e) => {
+        const { name, value } = e.target;
+        setCvForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleCvFormSubmit = async (e) => {
+        e.preventDefault();
+        setCvError('');
+        setCvSuccess('');
+
+        try {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            const response = await fetch(`/api/demandante/cv-form/${usuario.id_dem}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ cv_form: cvForm })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setCvError(data.error || 'Error al guardar CV');
+                return;
+            }
+
+            setCvSuccess('CV actualizado correctamente');
+        } catch (err) {
+            setCvError('Error de conexión');
+        }
+    };
+
+    const handleCvPdfSubmit = async (e) => {
+        e.preventDefault();
+        setCvError('');
+        setCvSuccess('');
+
+        if (!cvFile) {
+            setCvError('Selecciona un archivo PDF');
+            return;
+        }
+
+        try {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            const formData = new FormData();
+            formData.append('cv_pdf', cvFile);
+
+            const response = await fetch(`/api/demandante/cv-pdf/${usuario.id_dem}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setCvError(data.error || 'Error al subir CV');
+                return;
+            }
+
+            setCvPdfUrl(data.cv_pdf_url || '');
+            setCvFile(null);
+            setCvSuccess('CV PDF subido correctamente');
+        } catch (err) {
+            setCvError('Error de conexión');
+        }
     };
 
     const handleSubmitDatos = async (e) => {
@@ -326,23 +442,114 @@ function PerfilDemandante() {
                     </div>
                 </form>
               
+                <form onSubmit={handleCvFormSubmit}>
+                    <table className="table-perfil">
+                        <tbody>
+                            <tr><td colSpan="2"><h1>Mi CV (Formulario)</h1></td></tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <label>Resumen</label>
+                                    <textarea
+                                        name="resumen"
+                                        rows="4"
+                                        value={cvForm.resumen}
+                                        onChange={handleCvFormChange}
+                                        placeholder="Breve resumen profesional"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <label>Experiencia</label>
+                                    <textarea
+                                        name="experiencia"
+                                        rows="4"
+                                        value={cvForm.experiencia}
+                                        onChange={handleCvFormChange}
+                                        placeholder="Experiencia laboral relevante"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <label>Formación</label>
+                                    <textarea
+                                        name="formacion"
+                                        rows="4"
+                                        value={cvForm.formacion}
+                                        onChange={handleCvFormChange}
+                                        placeholder="Formación académica"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <label>Habilidades</label>
+                                    <textarea
+                                        name="habilidades"
+                                        rows="4"
+                                        value={cvForm.habilidades}
+                                        onChange={handleCvFormChange}
+                                        placeholder="Habilidades técnicas y personales"
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {cvError && <div className="error">{cvError}</div>}
+                    {cvSuccess && <div className="success">{cvSuccess}</div>}
+                    <div className="btn-datos">
+                        <button type="submit" className="act-datos">GUARDAR CV</button>
+                    </div>
+                </form>
+
+                <form onSubmit={handleCvPdfSubmit}>
+                    <table className="table-perfil">
+                        <tbody>
+                            <tr><td colSpan="2"><h1>Mi CV (PDF)</h1></td></tr>
+                            <tr>
+                                <td>
+                                    <label>Subir CV en PDF</label>
+                                    <input
+                                        type="file"
+                                        accept="application/pdf"
+                                        onChange={(e) => setCvFile(e.target.files?.[0] || null)}
+                                    />
+                                </td>
+                                <td>
+                                    {cvPdfUrl ? (
+                                        <a href={cvPdfUrl} target="_blank" rel="noreferrer">Ver CV actual</a>
+                                    ) : (
+                                        <span>No hay PDF subido</span>
+                                    )}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {cvError && <div className="error">{cvError}</div>}
+                    {cvSuccess && <div className="success">{cvSuccess}</div>}
+                    <div className="btn-datos">
+                        <button type="submit" className="act-datos">SUBIR PDF</button>
+                    </div>
+                </form>
+
                 <form onSubmit={handleSubmitTitulos}>
                     <table className="table-titulos">
                         <tbody>
                             
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h1>Mis Títulos</h1>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h2>Primer Título</h2>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="nombre">Nombre</label>
+                                    <label htmlFor="nombre">Nombre</label>
                                     <select
                                         value={titulos[0].titulo_id}
                                         onChange={(e) => handleTituloChange(0, 'titulo_id', e.target.value)}
@@ -391,13 +598,13 @@ function PerfilDemandante() {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td colSpan="2">
                                     <h2>Segundo Título</h2>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="nombre">Nombre</label>
+                                    <label htmlFor="nombre">Nombre</label>
                                     <select
                                         value={titulos[1].titulo_id}
                                         onChange={(e) => handleTituloChange(1, 'titulo_id', e.target.value)}

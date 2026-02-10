@@ -107,12 +107,20 @@ const DashboardCentro = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th colspan="3"><h1>Empresas por validar</h1></th>
+                            <th colSpan="4"><h1>Empresas por validar</h1></th>
                         </tr>
                     </thead>
-                    {loading && <div>Cargando empresas...</div>}
-                    {error && <div className="error">{error}</div>}
                     <tbody>
+                        {loading && (
+                            <tr>
+                                <td colSpan="4">Cargando empresas...</td>
+                            </tr>
+                        )}
+                        {error && (
+                            <tr>
+                                <td colSpan="4" className="error">{error}</td>
+                            </tr>
+                        )}
                         {empresas.map(empresa => (
                             <tr key={empresa.id}>
                                 <td>{empresa.nombre}</td>

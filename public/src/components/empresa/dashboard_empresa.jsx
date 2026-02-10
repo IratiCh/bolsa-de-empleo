@@ -7,10 +7,13 @@ function DashboardEmpresa() {
     const navigate = useNavigate();
     // Estado local que almacena la lista de ofertas laborales.
     const [ofertas, setOfertas] = useState([]);
+    const [historico, setHistorico] = useState([]);
     // Estado local para indicar si los datos aún se están cargando.
     const [loading, setLoading] = useState(true);
+    const [loadingHistorico, setLoadingHistorico] = useState(true);
     // Estado local para manejar mensajes de error.
     const [error, setError] = useState('');
+    const [errorHistorico, setErrorHistorico] = useState('');
 
     // Comprueba si el usuario está autenticado. Si no, lo redirige al inicio de sesión.
     if (!localStorage.getItem('usuario')) {
@@ -57,6 +60,34 @@ function DashboardEmpresa() {
         fetchOfertas();
     }, []);
 
+    useEffect(() => {
+        const fetchHistorico = async () => {
+            try {
+                const usuario = JSON.parse(localStorage.getItem('usuario'));
+                if (!usuario || !usuario.id_emp) {
+                    navigate('/login', { replace: true });
+                    return;
+                }
+
+                const response = await fetch(`/api/empresa/historico-ofertas?id_emp=${usuario.id_emp}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setErrorHistorico(data.error || 'Error al cargar histórico');
+                    return;
+                }
+
+                setHistorico(data.ofertas || []);
+            } catch (error) {
+                setErrorHistorico('Error al cargar histórico');
+            } finally {
+                setLoadingHistorico(false);
+            }
+        };
+
+        fetchHistorico();
+    }, []);
+
     // Función para cerrar una oferta laboral específica.
     const cerrarOferta = async (id) => {
         try {
@@ -75,7 +106,7 @@ function DashboardEmpresa() {
         // Actualiza el estado de la oferta como cerrada (-1)
         setOfertas((prevOfertas) =>
             prevOfertas.map((oferta) =>
-            oferta.id === id ? { ...oferta, abierta: -1 } : oferta
+            oferta.id === id ? { ...oferta, abierta: 1 } : oferta
             )
         );
         } catch (error) {
@@ -105,17 +136,6 @@ function DashboardEmpresa() {
     // Función que retorna los botones según el estado de la oferta laboral.
     const renderBotonesOferta = (oferta) => {
         switch(oferta.abierta) {
-            case -1: // Oferta cerrada por otro motivos
-                return (
-                    <>
-                        <button className="btn-modificar" disabled>
-                            ASIGNAR
-                        </button>
-                        <button className="btn-cerrar" disabled>
-                            CERRADA
-                        </button>
-                    </>
-                );
             case 0: // Oferta abierta
                 return (
                     <>
@@ -125,6 +145,9 @@ function DashboardEmpresa() {
                         >
                             ASIGNAR
                         </button>
+                        <button className="btn-modificar" onClick={() => handleAsignarOferta(oferta.id)}>
+                            SOLICITUDES
+                        </button>
                         <button
                             className="btn-cerrar"
                             onClick={() => cerrarOferta(oferta.id)}
@@ -133,11 +156,14 @@ function DashboardEmpresa() {
                         </button>
                     </>
                 );
-            case 1: // Oferta asignada (cerrada)
+            case 1: // Oferta cerrada
                 return (
                     <>
                         <button className="btn-modificar" disabled>
-                            ASIGNADA
+                            CERRADA
+                        </button>
+                        <button className="btn-modificar" onClick={() => handleAsignarOferta(oferta.id)}>
+                            SOLICITUDES
                         </button>
                         <button className="btn-cerrar" disabled>
                             CERRAR
@@ -147,6 +173,23 @@ function DashboardEmpresa() {
             default:
                 return null;
         }
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'No disponible';
+        try {
+            return new Date(dateString).toLocaleDateString('es-ES');
+        } catch {
+            return dateString;
+        }
+    };
+
+    const formatCandidato = (oferta) => {
+        if (!oferta?.candidato_nombre) return 'Sin candidato';
+        if (oferta.candidato_tipo === 'externo') {
+            return `${oferta.candidato_nombre} (Externo)`;
+        }
+        return oferta.candidato_nombre;
     };
 
   return (
@@ -163,7 +206,7 @@ function DashboardEmpresa() {
         </div>
       </header>
 
-      <div className="CONTENIDO">
+        <div className="CONTENIDO">
         <div className="OFERTAS">
           <table>
             <thead>
@@ -179,9 +222,17 @@ function DashboardEmpresa() {
                 </th>
               </tr>
             </thead>
-            {loading && <div>Cargando empresas...</div>}
-            {error && <div className="error">{error}</div>}
             <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan="3">Cargando ofertas...</td>
+                </tr>
+              )}
+              {error && (
+                <tr>
+                  <td colSpan="3" className="error">{error}</td>
+                </tr>
+              )}
               {ofertas.map((oferta) => (
                 <tr key={oferta.id}>
                   <td>{oferta.nombre}</td>
@@ -191,6 +242,47 @@ function DashboardEmpresa() {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="OFERTAS">
+          <table>
+            <thead>
+              <tr>
+                <th colSpan="4">
+                  <h1>Histórico de Ofertas</h1>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loadingHistorico && (
+                <tr>
+                  <td colSpan="4">Cargando histórico...</td>
+                </tr>
+              )}
+              {errorHistorico && (
+                <tr>
+                  <td colSpan="4" className="error">{errorHistorico}</td>
+                </tr>
+              )}
+              {historico.map((oferta) => (
+                <tr key={`hist-${oferta.id}`}>
+                  <td>{oferta.nombre}</td>
+                  <td>{formatDate(oferta.fecha_cierre)}</td>
+                  <td>{formatCandidato(oferta)}</td>
+                  <td>
+                    <button className="btn-modificar" onClick={() => handleAsignarOferta(oferta.id)}>
+                      SOLICITUDES
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {historico.length === 0 && !loadingHistorico && (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: 'center' }}>No hay histórico</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -250,4 +342,3 @@ function DashboardEmpresa() {
 }
 
 export default DashboardEmpresa;
-

@@ -65,10 +65,10 @@ class Oferta extends Model
         // Define la relación con el modelo "Demandante".
         // Usa la tabla pivot "apuntados_oferta" para conectar ofertas y demandantes.
         // Aplica el modelo pivot "ApuntadosOferta" para manejar esta relación.
-        // Incluye columnas adicionales en la tabla pivot: "adjudicada" y "fecha".
+        // Incluye columnas adicionales en la tabla pivot: "adjudicada_estado" y "fecha".
         return $this->belongsToMany(Demandante::class, 'apuntados_oferta', 'id_oferta', 'id_demandante')
                     ->using(ApuntadosOferta::class)            
-                    ->withPivot(['adjudicada', 'fecha']);
+                    ->withPivot(['adjudicada_estado', 'fecha']);
     }
     // Indica que este modelo no utiliza las columnas de timestamps (`created_at`, `updated_at`).
     public $timestamps = false;

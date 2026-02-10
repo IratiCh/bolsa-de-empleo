@@ -31,6 +31,14 @@
     padding: 3rem;
 }
 
+.DIV-CENTRO .CENTRO + .CENTRO {
+    margin-top: 2.5rem;
+}
+
+.DIV-CENTRO .CENTRO table {
+    margin-top: 1rem;
+}
+
 table {
     width: 100%;
 }
@@ -55,6 +63,10 @@ table {
     font-family: var(--font-secondary);
     cursor: pointer;
     border: 0;
+}
+
+.DIV-CENTRO .btn-aceptar {
+    font-weight: 700;
 }
 
 .btn-aceptar:hover, .BOTON-CREAR:hover {
