@@ -1,0 +1,19 @@
+{
+  "public/src/main.css": {
+    "file": "assets/main-262046b4.css",
+    "src": "public/src/main.css"
+  },
+  "public/src/main.jsx": {
+    "css": [
+      "assets/main-262046b4.css"
+    ],
+    "file": "assets/main-e1e21df0.js",
+    "isEntry": true,
+    "src": "public/src/main.jsx"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  }
+}
