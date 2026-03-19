@@ -330,4 +330,48 @@ class EmpresaController extends Controller
         }
     }
 
+    public function countEmpresas()
+    {
+        return response()->json([
+            'count' => Empresa::count()
+        ]);
+    }
+
+    // Listar todas las empresas
+    public function listarEmpresas()
+    {
+        try {
+            $empresas = Empresa::all(); // Devuelve todas las empresas
+            return response()->json($empresas);
+        } catch (\Exception $e) {
+            Log::error("Error al listar empresas: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar empresas'
+            ], 500);
+        }
+    }
+
+    // Eliminar una empresa
+    public function eliminarEmpresa($id)
+    {
+        try {
+            $empresa = Empresa::findOrFail($id);
+            $empresa->delete();
+
+            Usuario::where('email', $empresa->email)->where('rol', 'empresa')->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empresa eliminada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar empresa: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al eliminar empresa'
+            ], 500);
+        }
+    }
+
 }

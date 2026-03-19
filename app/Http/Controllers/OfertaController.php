@@ -469,4 +469,46 @@ class OfertaController extends Controller
             ], 500);
         }
     }
+
+    public function countOfertasTotales()
+    {
+        return response()->json([
+            'count' => Oferta::count()
+        ]);
+    }
+
+    // Listar todas las ofertas
+    public function listarOfertas()
+    {
+        try {
+            $ofertas = Oferta::with('empresa')->get(); // Devuelve todas las ofertas
+            return response()->json($ofertas);
+        } catch (\Exception $e) {
+            Log::error("Error al listar ofertas: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar ofertas'
+            ], 500);
+        }
+    }
+
+    // Eliminar una oferta
+    public function eliminarOferta($id)
+    {
+        try {
+            $oferta = Oferta::findOrFail($id);
+            $oferta->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Oferta eliminada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar oferta: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al eliminar oferta'
+            ], 500);
+        }
+    }
 }

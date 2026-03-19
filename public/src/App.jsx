@@ -10,8 +10,12 @@ import Login from "./components/login.jsx";
 import RegistroDemandante from "./components/registro_demandante.jsx";
 import RegistroEmpresa from "./components/registro_empresa.jsx";
 import DashboardCentro from "./components/centro/dashboard_centro.jsx";
+import ActivarEmpresas from "./components/centro/activar_empresas.jsx";
 import Informes from "./components/centro/informes.jsx";
 import GestionTitulos from "./components/centro/gestion_titulos.jsx";
+import GestionEmpresas from "./components/centro/gestion_empresas.jsx";
+import GestionDemandantes from "./components/centro/gestion_demandantes.jsx";
+import GestionOfertas from "./components/centro/gestion_ofertas.jsx";
 import CrearTitulo from "./components/centro/crear_titulo.jsx";
 import ModificarTitulo from "./components/centro/modificar_titulo.jsx";
 import DashboardEmpresa from "./components/empresa/dashboard_empresa.jsx";
@@ -59,6 +63,42 @@ function App() {
                     element={
                         <ProtectedRoute requiredRole="centro">
                             <GestionTitulos />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/centro/activar_empresas"
+                    element={
+                        <ProtectedRoute requiredRole="centro">
+                            <ActivarEmpresas />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/centro/gestion_empresas"
+                    element={
+                        <ProtectedRoute requiredRole="centro">
+                            <GestionEmpresas />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/centro/gestion_demandantes"
+                    element={
+                        <ProtectedRoute requiredRole="centro">
+                            <GestionDemandantes />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/centro/gestion_ofertas"
+                    element={
+                        <ProtectedRoute requiredRole="centro">
+                            <GestionOfertas />
                         </ProtectedRoute>
                     }
                 />

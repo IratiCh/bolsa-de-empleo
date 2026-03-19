@@ -17,63 +17,68 @@ const DashboardCentro = () => {
         navigate("/login", { replace: true });
     }
 
+    const [stats, setStats] = useState({
+        empresasPendientes: 0,
+        empresas: 0,
+        demandantes: 0,
+        ofertas: 0,
+        titulos: 0,
+        notificaciones: 0,
+    });
+
     useEffect(() => {
-        const fetchEmpresas = async () => {
-            // Función para obtener la lista de empresas desde el servidor.
+        const fetchStats = async () => {
             try {
-                // Solicita al backend las empresas pendientes de validación.
-                const response = await fetch("/api/centro/empresas-pendientes");
+                setLoading(true);
 
-                // Si la respuesta no es exitosa, actualiza el estado con un mensaje de error.
-                if (!response.ok) {
-                    setError("Error al cargar empresas");
-                }
+                // Empresas Pendientes
+                const resEmpresas = await fetch(
+                    "/api/centro/empresas-pendientes",
+                );
+                const empresasData = await resEmpresas.json();
 
-                // Convierte la respuesta en formato JSON y actualiza el estado de empresas.
-                const data = await response.json();
-                setEmpresas(data);
+                // Empresas Totales
+                const resEmpresasTotal = await fetch(
+                    "/api/centro/empresas-count",
+                );
+                const empresasTotal = await resEmpresasTotal.json();
+
+                // Demandantes
+                const resDemandantes = await fetch(
+                    "/api/centro/demandantes-count",
+                );
+                const demandantesData = await resDemandantes.json();
+
+                // Ofertas
+                const resOfertas = await fetch("/api/centro/ofertas-count");
+                const ofertasData = await resOfertas.json();
+
+                // Titulos
+                const resTitulos = await fetch("/api/centro/titulos");
+                const titulos = await resTitulos.json();
+
+                // Notificaciones
+                const resNotif = await fetch("/api/centro/notificaciones");
+                const notifData = await resNotif.json();
+
+                setStats({
+                    empresasPendientes: empresasData.length || 0,
+                    empresas: empresasTotal.count || 0,
+                    demandantes: demandantesData.count || 0,
+                    ofertas: ofertasData.count || 0,
+                    titulos: titulos.length || 0,
+                    notificaciones: notifData.notificaciones?.length || 0,
+                });
+                setEmpresas(empresasData);
             } catch (err) {
-                setError(err.message);
+                setError("Error al cargar dashboard");
             } finally {
-                // Independientemente del resultado, marca el estado de carga como falso.
                 setLoading(false);
             }
         };
 
-        // Ejecuta la función de obtención de datos cuando el componente se monta.
-        fetchEmpresas();
+        fetchStats();
     }, []);
-
-    // Función para validar o rechazar una empresa, dependiendo de la acción solicitada.
-    const handleValidacion = async (empresaId, accion) => {
-        try {
-            const response = await fetch(
-                `/api/centro/validar-empresa/${empresaId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ accion }),
-                },
-            );
-
-            const data = await response.json();
-
-            // Si la respuesta fue exitosa, actualiza el estado de la empresa validada.
-            if (response.ok && data.success) {
-                setEmpresas(
-                    empresas.filter((empresa) => empresa.id !== empresaId),
-                );
-            } else {
-                // Muestra un mensaje de error si la validación no fue exitosa.
-                setError(data.message || "Error al procesar la validación");
-            }
-        } catch (err) {
-            setError("Error de conexión al validar empresa");
-            console.error("Error:", err);
-        }
-    };
 
     const handleLogout = () => {
         // Limpiar el almacenamiento local
@@ -109,60 +114,49 @@ const DashboardCentro = () => {
 
             <div className="CONTENIDO">
                 <div className="CENTRO">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colSpan="4">
-                                    <h1>Empresas por validar</h1>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading && (
-                                <tr>
-                                    <td colSpan="4">Cargando empresas...</td>
-                                </tr>
-                            )}
-                            {error && (
-                                <tr>
-                                    <td colSpan="4" className="error">
-                                        {error}
-                                    </td>
-                                </tr>
-                            )}
-                            {empresas.map((empresa) => (
-                                <tr key={empresa.id}>
-                                    <td>{empresa.nombre}</td>
-                                    <td>{empresa.cif}</td>
-                                    <td>{empresa.telefono}</td>
-                                    <td>
-                                        <button
-                                            className="btn-aceptar"
-                                            onClick={() =>
-                                                handleValidacion(
-                                                    empresa.id,
-                                                    "aceptar",
-                                                )
-                                            }
-                                        >
-                                            ACEPTAR
-                                        </button>
-                                        <button
-                                            className="btn-cancelar"
-                                            onClick={() =>
-                                                handleValidacion(
-                                                    empresa.id,
-                                                    "rechazar",
-                                                )
-                                            }
-                                        >
-                                            CANCELAR
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div className="dashboard-cards">
+                        <div className="card">
+                            <Link to="/centro/activar_empresas">
+                                <h2>{stats.empresasPendientes}</h2>
+                                Empresas pendientes
+                            </Link>
+                        </div>
+
+                        <div className="card">
+                            <Link to="/centro/gestion_empresas">
+                                <h2>{stats.empresas}</h2>
+                                Empresas Totales
+                            </Link>
+                        </div>
+
+                        <div className="card">
+                            <Link to="/centro/gestion_demandantes">
+                                <h2>{stats.demandantes}</h2>
+                                Demandantes Totales
+                            </Link>
+                        </div>
+
+                        <div className="card">
+                            <Link to="/centro/gestion_ofertas">
+                                <h2>{stats.ofertas}</h2>
+                                Ofertas totales
+                            </Link>
+                        </div>
+
+                        <div className="card">
+                            <Link to="/centro/gestion_titulos">
+                                <h2>{stats.titulos}</h2>
+                                Titulos
+                            </Link>
+                        </div>
+
+                        <div className="card">
+                            <Link to="/centro/informes">
+                                <h2>{stats.notificaciones}</h2>
+                                Notificaciones
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
 

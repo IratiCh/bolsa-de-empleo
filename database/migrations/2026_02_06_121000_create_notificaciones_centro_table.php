@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('tipo', 45);
             $table->string('mensaje', 255);
-            $table->foreignId('id_oferta')->nullable()->constrained('oferta');
-            $table->foreignId('id_empresa')->nullable()->constrained('empresa');
-            $table->foreignId('id_demandante')->nullable()->constrained('demandante');
+            $table->foreignId('id_oferta')->nullable()->constrained('oferta')->onDelete('cascade');
+            $table->foreignId('id_empresa')->nullable()->constrained('empresa')->onDelete('cascade');
+            $table->foreignId('id_demandante')->nullable()->constrained('demandante')->onDelete('cascade');
             $table->string('externo_nombre', 120)->nullable();
             $table->dateTime('fecha')->nullable();
         });

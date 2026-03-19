@@ -34,6 +34,17 @@ Route::group(['prefix' => 'centro'], function () {
     Route::post('/titulos', [TituloController::class, 'crear']);
     Route::get('/titulos/{id}', [TituloController::class, 'mostrar']);
     Route::put('/titulos/{id}', [TituloController::class, 'modificar']);
+    Route::get('/empresas-count', [EmpresaController::class, 'countEmpresas']);
+    Route::get('/ofertas-count', [OfertaController::class, 'countOfertasTotales']);
+    Route::get('/demandantes-count', [DemandanteController::class, 'countDemandantes']);
+
+    Route::get('/empresas', [EmpresaController::class, 'listarEmpresas']);
+    Route::delete('/empresas/{id}', [EmpresaController::class, 'eliminarEmpresa']);
+    Route::get('/demandantes', [DemandanteController::class, 'listarDemandantes']);
+    Route::delete('/demandantes/{id}', [DemandanteController::class, 'eliminarDemandante']);
+    Route::get('/ofertas', [OfertaController::class, 'listarOfertas']);
+    Route::delete('/ofertas/{id}', [OfertaController::class, 'eliminarOferta']);
+
 });
 
 /* EMPRESA */

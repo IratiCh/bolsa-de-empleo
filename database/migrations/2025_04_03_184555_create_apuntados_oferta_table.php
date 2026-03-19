@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('apuntados_oferta', function (Blueprint $table) {
-            $table->foreignId('id_demandante')->constrained('demandante');
-            $table->foreignId('id_oferta')->constrained('oferta');
+            $table->foreignId('id_demandante')->constrained('demandante')->onDelete('cascade');
+            $table->foreignId('id_oferta')->constrained('oferta')->onDelete('cascade');
             $table->string('adjudicada', 45)->nullable();
             $table->date('fecha')->nullable();
             $table->primary(['id_oferta', 'id_demandante']);

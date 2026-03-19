@@ -265,4 +265,59 @@ class DemandanteController extends Controller
             ], 500);
         }
     }
+
+    public function countDemandantes()
+    {
+        try {
+            $count = Demandante::count();
+
+            return response()->json([
+                'success' => true,
+                'count' => $count
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al contar demandantes'
+            ], 500);
+        }
+    }
+
+    // Listar todas las demandante
+    public function listarDemandantes()
+    {
+        try {
+            $demandantes = Demandante::all(); // Devuelve todos los demandantes
+            return response()->json($demandantes);
+        } catch (\Exception $e) {
+            Log::error("Error al listar demandantes: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar demandantes'
+            ], 500);
+        }
+    }
+
+    // Eliminar una demandante
+    public function eliminarDemandante($id)
+    {
+        try {
+            $demandante = Demandante::findOrFail($id);
+            $demandante->delete();
+
+            Usuario::where('email', $demandante->email)->where('rol', 'demandante')->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Demandante eliminada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar demandante: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al eliminar demandante'
+            ], 500);
+        }
+    }
+
 }

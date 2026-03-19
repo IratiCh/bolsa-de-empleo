@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ofertas_empresa', function (Blueprint $table) {
-            $table->foreignId('id_empresa')->constrained('empresa');
-            $table->foreignId('id_oferta')->constrained('oferta');
+            $table->foreignId('id_empresa')->constrained('empresa')->onDelete('cascade');
+            $table->foreignId('id_oferta')->constrained('oferta')->onDelete('cascade');
             $table->primary(['id_empresa', 'id_oferta']);
         });
     }

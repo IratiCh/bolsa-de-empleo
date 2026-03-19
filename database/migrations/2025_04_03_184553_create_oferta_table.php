@@ -23,8 +23,8 @@ return new class extends Migration
             $table->tinyInteger('abierta')->nullable();
             $table->date('fecha_cierre')->nullable();
             $table->string('motivo_cierre', 500)->nullable();
-            $table->foreignId('id_emp')->constrained('empresa');
-            $table->foreignId('id_tipo_cont')->constrained('tipos_contrato');
+            $table->foreignId('id_emp')->constrained('empresa')->onDelete('cascade');
+            $table->foreignId('id_tipo_cont')->constrained('tipos_contrato')->onDelete('cascade');
         });
     }
 

@@ -330,3 +330,45 @@ input:focus {
     background: var(--color-orange);
     color: var(--color-white);
 }
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    margin: 30px;
+    font-family: var(--font-secondary);
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px var(--color-blue-dark);
+}
+
+.card h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--color-blue-dark);
+    text-align: center;
+}
+
+.card a {
+    font-size: 18px;
+    color: var(--color-gray);
+}
+
+.card a:hover {
+    color: var(--color-orange);
+}
+
+@media (max-width: 900px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.gestion td {
+    padding-left: 5vh;
+}
