@@ -1,0 +1,1034 @@
+/* ---- DEMANDANTE ---- */
+
+/* HEADER PERFIL */
+
+.HEADER-PERFIL {
+    background-image: linear-gradient(
+        90deg,
+        var(--color-white),
+        var(--color-blue-dark),
+        var(--color-white)
+    );
+    min-height: 12.5vh;
+}
+
+.HEADER-PERFIL .logo {
+    position: absolute;
+    top: 36px;
+    left: 50px;
+    background-size: contain;
+}
+
+.HEADER-PERFIL .user img {
+    position: absolute;
+    top: 36px;
+    right: 50px;
+    background-size: contain;
+}
+
+/* FOOTER PERFIL */
+
+.footer-perfil {
+    background-image: linear-gradient(90deg, #e7e0ec 0%, #ffe0ff 100%);
+}
+
+/* HEADER DASHBOARD */
+
+.HEADER-DASH {
+    background-image: linear-gradient(
+        180deg,
+        var(--color-white) 0%,
+        var(--color-blue-dark) 100%
+    );
+    min-height: 700px;
+}
+
+.HEADER-DASH .logo {
+    position: absolute;
+    top: 36px;
+    left: 50px;
+    background-size: contain;
+}
+
+.HEADER-DASH .user img {
+    position: absolute;
+    top: 36px;
+    right: 50px;
+    background-size: contain;
+}
+
+.HEADER-DASH .dash h1 {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 35%;
+}
+
+.HEADER-DASH .dash img {
+    position: absolute;
+    top: 90px;
+    right: 90px;
+    width: 900px;
+    height: auto;
+}
+
+/* CONTENIDO */
+
+.DIV-DEMANDANTE .DEMANDANTE {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+}
+
+.PERFIL .DEMANDANTE {
+    position: relative;
+    background-color: var(--color-white);
+    padding: 3rem;
+}
+
+table {
+    width: 100%;
+}
+
+.DIV-DEMANDANTE h1 {
+    font-family: var(--font-primary);
+    color: var(--color-blue-dark);
+    font-weight: 500;
+    font-size: 32px;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.DIV-DEMANDANTE .btn-cancelar {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    font-weight: 500;
+    border: 0;
+}
+
+.DIV-DEMANDANTE .btn-cancelar:disabled {
+    background-color: var(--color-btn-elim-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    border: 0;
+    font-weight: 500;
+    cursor: default;
+}
+
+.btn-cancelar:hover {
+    background-color: var(--color-btn-elim-dark);
+}
+
+td {
+    padding-left: 0;
+    padding-right: 24px;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    vertical-align: top;
+}
+
+@media (max-width: 768px) {
+    .DIV-DEMANDANTE h1 {
+        font-size: 24px;
+        margin-left: 3vh;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        font-size: 1em;
+    }
+
+    .btn-cancelar {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}
+
+/* PAGINA EN DESARROLLO */
+
+.CONTENIDO .pag-desarrollo {
+    text-align: center;
+    font-size: 56px;
+}
+
+/* PERFIL */
+
+.perfil-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    margin: 20px auto;
+    padding: 10px 20px;
+}
+
+.perfil-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfil-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    padding: 5px;
+}
+
+.perfil-texto {
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-texto p {
+    margin: 0;
+}
+
+.perfil-texto p:first-child {
+    font-weight: bold;
+    color: var(--color-black);
+}
+
+.perfil-texto p:last-child {
+    font-size: 0.9em;
+    color: var(--color-gray);
+}
+
+.btn-perfil {
+    display: flex;
+    gap: 10px;
+}
+
+/* FORMULARIOS */
+
+.act-ofertas-apun {
+    background-color: var(--color-btn-mod);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+}
+
+.act-ofertas-apun:hover {
+    background-color: var(--color-btn-mod-dark);
+}
+
+.btn-logout {
+    background-color: var(--color-btn-elim);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    font-weight: 500;
+    border: 0;
+}
+
+.btn-logout:hover {
+    background-color: var(--color-btn-elim-dark);
+}
+
+.DEMANDANTE form {
+    padding-left: 5rem;
+    font-size: 1.2em;
+    font-family: var(--font-secondary);
+    padding-top: 3vh;
+}
+
+label {
+    display: block;
+    position: static;
+    top: auto;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+input,
+select,
+textarea {
+    margin-top: 0;
+    width: 100%;
+    position: relative;
+    padding: 1rem;
+    outline: none;
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    background-color: var(--color-light-gray);
+    display: block;
+}
+
+input:focus,
+select:focus {
+    border: 2px solid var(--color-blue-dark);
+}
+
+.btn-datos,
+.btn-info {
+    text-align: right;
+}
+
+.btn-info {
+    margin-top: 50px;
+}
+
+.act-datos,
+.act-info,
+.inscribirse-ofer {
+    background-color: var(--color-orange);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    margin-right: 1.5rem;
+    border: 0;
+}
+
+.inscribirse-ofer {
+    font-weight: 700;
+}
+
+.act-datos:hover,
+.act-info:hover,
+.inscribirse-ofer:hover {
+    background-color: var(--color-blue-dark);
+}
+
+.oferta-cerrada {
+    background-color: var(--color-btn-mod-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+    font-weight: 700;
+}
+
+.inscrito-ofer {
+    background-color: var(--color-btn-mod-disable);
+    padding: 10px 22px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-family: var(--font-secondary);
+    margin-right: 3rem;
+    border: 0;
+    font-weight: 700;
+}
+
+h2 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 20px;
+    text-align: left;
+}
+
+/* INSCRIBIRSE OFERTA */
+
+.btn-insc {
+    text-align: center;
+}
+
+.det-ofer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left-oferta,
+.right-oferta {
+    font-family: var(--font-secondary);
+}
+
+.left-oferta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 0.6;
+    margin-left: 2vh;
+}
+
+.left-oferta h2 {
+    font-size: 24px;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.left-oferta p {
+    font-size: 20px;
+    margin-left: 3vh;
+}
+
+.right-oferta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 0.4;
+}
+
+.right-section-ofer {
+    position: relative;
+    width: 90%;
+    left: 10%;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    background-color: #e7e0ec80;
+}
+
+.right-section-ofer h3,
+.right-section-ofer p {
+    margin-left: 1rem;
+}
+
+.right-section-ofer h3 {
+    font-size: 18px;
+}
+
+.right-section-ofer p {
+    font-size: 16px;
+    color: var(--color-gray);
+}
+
+/* DASHBOARD */
+
+.CONTENIDO .title-dash {
+    text-align: center;
+    margin-top: 0;
+}
+
+.section-ofer {
+    position: relative;
+    width: 30%;
+    left: 5%;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 3rem;
+}
+
+.lista-ofertas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    font-family: var(--font-secondary);
+}
+
+.card-ofer {
+    width: 30%;
+    min-width: 300px;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-left: 1rem;
+    padding: 1rem;
+}
+
+.card-header {
+    margin-left: 1rem;
+}
+
+.card-header h3:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.card-details {
+    margin-left: 1rem;
+}
+
+.card-details {
+    margin-left: 1rem;
+}
+
+.card-details p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.info-empresa img {
+    background-color: #f0f0f0;
+    padding: 0.3rem;
+}
+
+.info-section,
+.info-empresa {
+    display: flex;
+    align-items: center;
+}
+
+.info-section p:first-child {
+    margin-right: 10px;
+}
+
+.info-empresa img,
+.info-section img {
+    margin-right: 10px;
+}
+
+/* BUSCADOR */
+
+.buscador {
+    position: absolute;
+    top: 655px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 70%;
+}
+.buscador img {
+    margin-left: 2rem;
+}
+
+.buscador input {
+    font-family: var(--font-secondary);
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
+
+.search-input {
+    margin: 0;
+    position: relative;
+    padding: 10px 22px;
+    background-color: var(--color-white);
+    color: var(--color-gray);
+    width: 100%;
+}
+
+.buscador button {
+    padding: 10px 22px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.limpiar {
+    margin: 0;
+    position: relative;
+    padding: 10px 22px;
+    background-color: var(--color-white);
+    color: var(--color-gray);
+    width: 10%;
+    cursor: pointer;
+}
+
+.cont-buscar {
+    margin-right: 2rem;
+}
+
+.btn-buscar {
+    background-color: var(--color-orange);
+    border-radius: 8px;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    font-weight: 500;
+    border: 0;
+}
+
+.btn-buscar:hover {
+    background-color: var(--color-blue-dark);
+}
+
+.toggle-password-demandante {
+    position: absolute;
+    right: 85px;
+    top: 52.5%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.toggle-password-demandante img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+
+@media (min-width: 1200px) and (max-width: 1550px) {
+    .toggle-password-demandante {
+        top: 53%;
+    }
+}
+
+/* HEADER */
+
+@media (max-width: 900px) {
+    .HEADER-DASH {
+        min-height: 8vh;
+        padding: 0.5rem;
+    }
+
+    .HEADER-DASH .logo {
+        top: 20px;
+        left: 20px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .logo img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .user img {
+        top: 20px;
+        right: 20px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .desplegable {
+        top: 65px;
+        right: 5px;
+    }
+}
+
+/* RESPONSIVIDAD MOVIL TABLET */
+
+@media (max-width: 1200px) {
+    .HEADER-DASH .dash img {
+        width: 700px;
+        top: 200px;
+        right: 40px;
+    }
+
+    .limpiar {
+        width: 20%;
+    }
+
+    .toggle-password-demandante {
+        top: 53.5%;
+    }
+}
+
+@media (max-width: 900px) {
+    .HEADER-DASH {
+        min-height: 500px;
+        padding: 0.5rem;
+    }
+
+    .HEADER-PERFIL {
+        min-height: 8vh;
+        padding: 0.5rem;
+    }
+
+    .HEADER-DASH .logo,
+    .HEADER-PERFIL .logo {
+        top: 20px;
+        left: 20px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .logo img,
+    .HEADER-PERFIL .logo img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .user img,
+    .HEADER-PERFIL .user img {
+        top: 20px;
+        right: 20px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .HEADER-DASH .dash h1 {
+        top: 120px;
+        left: 40px;
+        width: 45%;
+        max-width: 260px;
+        font-size: 1.65rem;
+    }
+
+    .HEADER-DASH .dash img {
+        width: 500px;
+        top: 180px;
+        right: 0;
+        max-width: none;
+    }
+
+    .buscador {
+        top: 465px;
+        width: calc(100% - 24px);
+        max-width: 80%;
+        padding: 0.5rem;
+    }
+
+    .buscador > img:first-child {
+        margin-left: 0.5rem;
+        width: 20px;
+        height: 20px;
+    }
+
+    .buscador > img[alt="Línea"] {
+        height: 50px;
+    }
+
+    .search-input {
+        padding: 0.25rem;
+    }
+
+    .limpiar {
+        padding: 0.5rem;
+    }
+
+    .cont-buscar {
+        margin-right: 0;
+    }
+
+    .CONTENIDO {
+        padding-top: 5rem;
+    }
+}
+
+/* =========================================
+   PERFIL DEMANDANTE - RESPONSIVE
+   ========================================= */
+@media (max-width: 900px) {
+    .PERFIL .DEMANDANTE {
+        width: 100%;
+        left: 0;
+        padding: 1.25rem 1rem 2rem;
+        border-radius: 0;
+    }
+
+    .perfil-container {
+        width: 100%;
+        margin: 0 0 1.5rem;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .perfil-info {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .perfil-texto p:first-child {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .perfil-texto p:last-child {
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+
+    .btn-perfil {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .act-ofertas-apun,
+    .btn-logout {
+        width: 100%;
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .DEMANDANTE form {
+        padding-left: 0;
+        padding-top: 1rem;
+        font-size: 1rem;
+    }
+
+    .DIV-DEMANDANTE h1 {
+        font-size: 2rem;
+        margin-left: 0;
+        margin-bottom: 1rem;
+        line-height: 1.15;
+    }
+
+    .table-perfil,
+    .table-perfil tbody,
+    .table-perfil tr,
+    .table-perfil td,
+    .table-titulos,
+    .table-titulos tbody,
+    .table-titulos tr,
+    .table-titulos td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-perfil tr,
+    .table-titulos tr {
+        margin-bottom: 0.25rem;
+    }
+
+    .table-perfil td,
+    .table-titulos td,
+    td {
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+
+    .table-perfil td[colspan="2"],
+    .table-titulos td[colspan="2"] {
+        width: 100%;
+    }
+
+    .table-perfil h1,
+    .table-titulos h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .table-titulos h2 {
+        margin-top: 1.25rem;
+        margin-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    label {
+        position: static;
+        display: block;
+        top: auto;
+        left: auto;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        margin-top: 0;
+        padding: 0.9rem 1rem;
+        font-size: 16px;
+    }
+
+    .btn-datos,
+    .btn-info,
+    .btn-insc {
+        text-align: center;
+    }
+
+    .act-datos,
+    .act-info,
+    .inscribirse-ofer,
+    .oferta-cerrada,
+    .inscrito-ofer {
+        width: 100%;
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .btn-info {
+        margin-top: 1rem;
+    }
+
+    .error,
+    .success {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+    }
+
+    .toggle-password-demandante {
+        right: 25px;
+        top: 60%;
+        width: 22px;
+        height: 22px;
+    }
+
+    .toggle-password-demandante img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .det-ofer-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .left-oferta,
+    .right-oferta {
+        width: 100%;
+        flex: none;
+    }
+
+    .left-oferta {
+        margin-left: 0;
+    }
+
+    .right-oferta {
+        min-width: 0;
+    }
+
+    .right-section-ofer {
+        width: 100%;
+        left: 0;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .right-section-ofer h3,
+    .right-section-ofer p {
+        margin-left: 0;
+    }
+
+    .inscribirse-ofer,
+    .oferta-cerrada,
+    .inscrito-ofer {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .PERFIL .DEMANDANTE {
+        padding: 1rem 0.85rem 1.5rem;
+    }
+
+    .DIV-DEMANDANTE h1 {
+        font-size: 1.7rem;
+    }
+
+    .table-titulos h2 {
+        font-size: 1rem;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: 0.8rem 0.9rem;
+        font-size: 15px;
+    }
+
+    .act-ofertas-apun,
+    .btn-logout,
+    .act-datos,
+    .act-info {
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
+
+    .toggle-password-demandante {
+        right: 25px !important;
+        top: 61% !important;
+        width: 22px;
+        height: 22px;
+    }
+
+    .toggle-password-demandante img {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* =========================================
+   OFERTAS INSCRITAS
+   ========================================= */
+@media (max-width: 900px) {
+    .DIV-DEMANDANTE .DEMANDANTE table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE thead,
+    .DIV-DEMANDANTE .DEMANDANTE tbody,
+    .DIV-DEMANDANTE .DEMANDANTE tr,
+    .DIV-DEMANDANTE .DEMANDANTE td,
+    .DIV-DEMANDANTE .DEMANDANTE th {
+        display: block;
+        width: 100%;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE thead tr {
+        margin-bottom: 1rem;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE tbody tr {
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE tbody td {
+        padding: 0;
+        margin-bottom: 0.85rem;
+        font-size: 1rem;
+        word-break: break-word;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE tbody td:last-child {
+        margin-bottom: 0;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE th h1 {
+        margin: 0 0 1rem 0;
+    }
+
+    .DIV-DEMANDANTE .btn-cancelar {
+        width: 100%;
+        margin-right: 0;
+        text-align: center;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+    }
+
+    .DIV-DEMANDANTE .DEMANDANTE td[colspan="3"] {
+        text-align: left !important;
+        padding: 0.5rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .DIV-DEMANDANTE .DEMANDANTE tbody tr {
+        padding: 0.85rem;
+    }
+
+    .DIV-DEMANDANTE .btn-cancelar {
+        font-size: 0.9rem;
+        padding: 11px 14px;
+    }
+}
