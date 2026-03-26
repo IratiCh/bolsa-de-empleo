@@ -114,7 +114,7 @@ const GestionOfertas = () => {
                 </div>
             </div>
 
-            <footer className="index-footer">
+            <footer className="global-footer">
                 <div className="footer-container">
                     <p>© 2026 Sara & Irati. Derechos reservados.</p>
                 </div>
