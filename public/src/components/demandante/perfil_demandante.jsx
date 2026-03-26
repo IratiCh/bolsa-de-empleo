@@ -54,16 +54,24 @@ function PerfilDemandante() {
             navigate('/login');
             return;
         }
-        
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
         const cargarPerfil = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/demandante/perfil/${usuario.id_dem}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                
+                const response = await fetch(
+                    `/api/demandante/perfil/${usuario.id_dem}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    },
+                );
+
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -113,14 +121,22 @@ function PerfilDemandante() {
     useEffect(() => {
         const usuario = JSON.parse(localStorage.getItem('usuario'));
         if (!usuario?.id_dem) return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
 
         const cargarCv = async () => {
             try {
-                const response = await fetch(`/api/demandante/cv/${usuario.id_dem}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
+                const response = await fetch(
+                    `/api/demandante/cv/${usuario.id_dem}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    },
+                );
 
                 const data = await response.json();
 
@@ -143,7 +159,7 @@ function PerfilDemandante() {
         };
 
         cargarCv();
-    }, []);
+    }, [navigate]);
 
     const handleDatosChange = (e) => {
         const { name, value } = e.target;
@@ -431,6 +447,29 @@ function PerfilDemandante() {
                                         value={demandanteEdicion.contrasena_hash}
                                         onChange={handleDatosChange}
                                     />
+                                    <button
+                                        type="button"
+                                        className="toggle-password-demandante"
+                                        onClick={togglePasswordVisibility}
+                                        aria-label={
+                                            showPassword
+                                                ? "Ocultar contraseña"
+                                                : "Mostrar contraseña"
+                                        }
+                                    >
+                                        <img
+                                            src={
+                                                showPassword
+                                                    ? "/img/ocultar_contrasena.png"
+                                                    : "/img/mostrar_contrasena.png"
+                                            }
+                                            alt={
+                                                showPassword
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
+                                        />
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>

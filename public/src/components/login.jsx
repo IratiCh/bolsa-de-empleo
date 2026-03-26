@@ -48,8 +48,12 @@ const Login = () => {
                 };
     
                 // Almacena los datos del usuario en el almacenamiento local del navegador.
-                localStorage.setItem('usuario', JSON.stringify(userData));
-    
+                localStorage.setItem("usuario", JSON.stringify(userData));
+                // Guarda el token para autenticar llamadas a /api con Sanctum.
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                }
+
                 // Redirige al usuario a diferentes rutas dependiendo de su rol.
                 switch (data.rol) {
                     case 'demandante':
@@ -80,11 +84,13 @@ const Login = () => {
                 }
             } else {
                 // Muestra el mensaje de error proveniente del backend o un mensaje genérico.
-                setErrorMessage(data.message || 'Error de inicio de sesión');
+                setErrorMessage(data.message || "Error de inicio de sesión");
+                localStorage.removeItem("token");
             }
         } catch (error) {
             // Muestra un mensaje de error genérico.
-            setErrorMessage('Hubo un error, por favor intenta nuevamente.');
+            setErrorMessage("Hubo un error, por favor intenta nuevamente.");
+            localStorage.removeItem("token");
         }
     };
 

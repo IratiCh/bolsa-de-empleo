@@ -10,7 +10,7 @@ use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\DemandanteController;
 use App\Http\Controllers\OfertaDemandanteController;
-
+use GuzzleHttp\Middleware;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -57,7 +57,7 @@ Route::group(['prefix' => 'ofertas'], function () {
     Route::post('/crear', [OfertaController::class, 'crearOferta'])->middleware('api');
 });
 
-Route::group(['prefix' => 'demandante'], function () {
+Route::group(['prefix' => 'demandante', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/ofertas', [OfertaController::class, 'getOfertasDemandante']);
     
     Route::get('/ofertas/{id}', [OfertaDemandanteController::class, 'show']);

@@ -39,8 +39,15 @@ function DashboardDemandante() {
                 }
 
                 // Solicita la lista de ofertas para el demandante autenticado.
-                const response = await fetch(`/api/demandante/ofertas?id_dem=${usuario.id_dem}`);
-                
+                const response = await fetch(
+                    `/api/demandante/ofertas?id_dem=${usuario.id_dem}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    },
+                );
+
                 // Si la solicitud fue exitosa, actualiza los estados de ofertas y ofertas filtradas.
                 if (response.ok) {
                     const data = await response.json();
