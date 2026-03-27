@@ -68,13 +68,8 @@ class AuthController extends Controller
         // Autenticar al usuario con Laravel Auth.
         Auth::login($user);
 
-        // Generar token para autenticación vía Sanctum
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         // Devolver los datos del usuario autenticado en formato JSON.
-        return response()->json(array_merge($responseData, [
-            'token' => $token
-        ]));
+        return response()->json($responseData);
     }
 
     /**

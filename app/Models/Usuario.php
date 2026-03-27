@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable; // Extiende la funcionalidad de "Authenticatable" para manejar autenticación de usuarios.
 use Illuminate\Notifications\Notifiable; // Trait para gestionar notificaciones relacionadas con el usuario.
-use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
     // Permite que el modelo Usuario envíe notificaciones (por ejemplo, correos electrónicos, alertas).
-    use HasApiTokens, Notifiable;
+    use Notifiable;
 
     // Define los campos que pueden ser asignados de forma masiva.
     protected $fillable = [
