@@ -10,7 +10,7 @@ use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\DemandanteController;
 use App\Http\Controllers\OfertaDemandanteController;
-
+use GuzzleHttp\Middleware;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -34,16 +34,6 @@ Route::group(['prefix' => 'centro'], function () {
     Route::post('/titulos', [TituloController::class, 'crear']);
     Route::get('/titulos/{id}', [TituloController::class, 'mostrar']);
     Route::put('/titulos/{id}', [TituloController::class, 'modificar']);
-    Route::get('/empresas-count', [EmpresaController::class, 'countEmpresas']);
-    Route::get('/ofertas-count', [OfertaController::class, 'countOfertasTotales']);
-    Route::get('/demandantes-count', [DemandanteController::class, 'countDemandantes']);
-
-    Route::get('/empresas', [EmpresaController::class, 'listarEmpresas']);
-    Route::delete('/empresas/{id}', [EmpresaController::class, 'eliminarEmpresa']);
-    Route::get('/demandantes', [DemandanteController::class, 'listarDemandantes']);
-    Route::delete('/demandantes/{id}', [DemandanteController::class, 'eliminarDemandante']);
-    Route::get('/ofertas', [OfertaController::class, 'listarOfertas']);
-    Route::delete('/ofertas/{id}', [OfertaController::class, 'eliminarOferta']);
 });
 
 /* EMPRESA */
@@ -53,10 +43,6 @@ Route::group(['prefix' => 'empresa'], function() {
     Route::post('/asignar_oferta/{id}/asignar', [EmpresaController::class, 'asignarDemandante']);
     Route::get('/historico-ofertas', [OfertaController::class, 'getHistoricoEmpresa']);
     Route::get('/ofertas/{id}/solicitudes', [EmpresaController::class, 'getSolicitudesOferta']);
-    Route::get('/perfil/{id}', [EmpresaController::class, 'getPerfil']);
-    Route::put('/actualizar_datos/{id}', [EmpresaController::class, 'actualizarPerfil']);
-    Route::get('/datos_oferta/{id}', [OfertaController::class, 'getOferta']);
-    Route::put('/modificar_oferta/{id}', [OfertaController::class, 'modificarOferta']);
 });
 
 /* DEMANDANTE */
@@ -71,7 +57,7 @@ Route::group(['prefix' => 'ofertas'], function () {
     Route::post('/crear', [OfertaController::class, 'crearOferta'])->middleware('api');
 });
 
-Route::group(['prefix' => 'demandante'], function () {
+Route::group(['prefix' => 'demandante', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/ofertas', [OfertaController::class, 'getOfertasDemandante']);
     
     Route::get('/ofertas/{id}', [OfertaDemandanteController::class, 'show']);
